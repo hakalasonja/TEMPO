@@ -55,7 +55,7 @@ tempo.evolver module
 Module contents
 ---------------
 
-.. automodule:: TEMPO
+.. automodule:: tempo
    :members:
    :undoc-members:
    :show-inheritance:
