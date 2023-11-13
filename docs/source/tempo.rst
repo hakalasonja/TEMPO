@@ -1,61 +1,53 @@
-NVscripts package
+TEMPO package
 =================
 
 Submodules
 ----------
 
-NVscripts.qsys module
+qsys module
 ---------------------
 
-.. automodule:: NVscripts.qsys
+.. automodule:: qsys
    :members:
    :undoc-members:
    :show-inheritance:
 
-NVscripts.ham module
+ham module
 --------------------
 
-.. automodule:: NVscripts.ham
+.. automodule:: ham
    :members:
    :undoc-members:
    :show-inheritance:
    
-NVscripts.pulsetype module
+pulsetype module
 --------------------------
 
-.. automodule:: NVscripts.pulsetype
+.. automodule:: pulsetype
    :members:
    :undoc-members:
    :show-inheritance:
 
-NVscripts.pulse module
+pulse module
 ----------------------
 
-.. automodule:: NVscripts.pulse
+.. automodule:: pulse
    :members:
    :undoc-members:
    :show-inheritance:
 
-NVscripts.pulsesequence module
+pulsesequence module
 ------------------------------
 
-.. automodule:: NVscripts.pulsesequence
+.. automodule:: pulsesequence
    :members:
    :undoc-members:
    :show-inheritance:
    
-NVscripts.evolver module
+evolver module
 ------------------------
 
-.. automodule:: NVscripts.evolver
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: NVscripts
+.. automodule:: evolver
    :members:
    :undoc-members:
    :show-inheritance:
