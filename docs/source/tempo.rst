@@ -51,3 +51,11 @@ evolver module
    :members:
    :undoc-members:
    :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: TEMPO
+   :members:
+   :undoc-members:
+   :show-inheritance:
