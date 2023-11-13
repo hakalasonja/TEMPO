@@ -2,7 +2,7 @@
 
 # -- Project information
 
-project = 'tempo'
+project = 'TEMPO'
 copyright = '2023, Sonja Hakala'
 author = 'Sonja Hakala'
 
