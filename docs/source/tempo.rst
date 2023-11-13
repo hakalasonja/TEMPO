@@ -4,50 +4,50 @@ TEMPO package
 Submodules
 ----------
 
-qsys module
+tempo.qsys module
 ---------------------
 
-.. automodule:: qsys
+.. automodule:: tempo.qsys
    :members:
    :undoc-members:
    :show-inheritance:
 
-ham module
+tempo.ham module
 --------------------
 
-.. automodule:: ham
+.. automodule:: tempo.ham
    :members:
    :undoc-members:
    :show-inheritance:
    
-pulsetype module
+tempo.pulsetype module
 --------------------------
 
-.. automodule:: pulsetype
+.. automodule:: tempo.pulsetype
    :members:
    :undoc-members:
    :show-inheritance:
 
-pulse module
+tempo.pulse module
 ----------------------
 
-.. automodule:: pulse
+.. automodule:: tempo.pulse
    :members:
    :undoc-members:
    :show-inheritance:
 
-pulsesequence module
+tempo.pulsesequence module
 ------------------------------
 
-.. automodule:: pulsesequence
+.. automodule:: tempo.pulsesequence
    :members:
    :undoc-members:
    :show-inheritance:
    
-evolver module
+tempo.evolver module
 ------------------------
 
-.. automodule:: evolver
+.. automodule:: tempo.evolver
    :members:
    :undoc-members:
    :show-inheritance:
