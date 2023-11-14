@@ -20,7 +20,7 @@ from tempo.pulsetype import Pulsetype
 # in pulsepars setter, check that all keys of input dict are included in string keys
 # initialize pulsepars dictionary with default values (0)
 
-class Pulse(pulsetype.Pulsetype):
+class Pulse(Pulsetype):
     """
     A class for creating pulses or time-dependent Hamiltonian objects.
     
