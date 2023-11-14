@@ -8,8 +8,8 @@ Created on Mon Jul 10 19:52:34 2023
 
 from qutip import *
 import os
-import qsys
-import ham
+from tempo.qsys import Qsys
+from tempo.ham import Hamiltonian
 import numpy as np
 
 def ZFSfunc(Hmats, Hpars):
