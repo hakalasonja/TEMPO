@@ -10,10 +10,10 @@ Create time-dependent pulses.
 
 import qutip
 import os
-import qsys
-import ham
+from tempo.qsys import Qsys
+from tempo.ham import Hamiltonian
 import numpy as np
-import pulsetype
+from tempo.pulsetype import Pulsetype
  
 # add update method: update dictionary using input pulseparams and the string keys from pulsetp
 # update only in init
