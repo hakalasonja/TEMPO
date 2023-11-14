@@ -10,8 +10,8 @@ Class to implement time-evolution of a state under applied pulses.
 
 from qutip import mesolve, solver, qobj, expect
 import os
-import ham
-import pulse
+from tempo.ham import Hamiltonian
+from tempo.pulse import Pulse
 import numpy as np
 from math import isclose
 
