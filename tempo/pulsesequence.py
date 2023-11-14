@@ -10,8 +10,8 @@ Sequence (list) of pulses.
 
 import qutip
 import os
-import ham
-import pulse
+from tempo.ham import Hamiltonian
+from tempo.pulse import Pulse
 import numpy as np
 
 # TODO: option to add multiple pulses at once in addpulse method
