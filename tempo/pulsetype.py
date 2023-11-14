@@ -10,8 +10,8 @@ The Pulsetype class to create time-dependent pulse models.
 
 import qutip
 import os
-import qsys
-import ham
+from tempo.qsys import Qsys
+from tempo.ham import Hamiltonian
 import numpy as np
 
 # add type checks
