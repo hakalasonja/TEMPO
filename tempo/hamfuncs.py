@@ -31,7 +31,7 @@ def ZFS(qsystem):
     ZFSpars = {'coeff': 2*np.pi, 'ZFSconst': 2.87e3}
     ZFSmats = {'Sz': qsystem.getSz()[0]}
     
-    return ham.Hamiltonian(ZFSmats, ZFSpars, ZFSfunc)
+    return Hamiltonian(ZFSmats, ZFSpars, ZFSfunc)
 
 def Zeeman(qsystem, Bfield, nuc = False, NV = 15):
     
@@ -51,7 +51,7 @@ def Zeeman(qsystem, Bfield, nuc = False, NV = 15):
         
     Zeefunc = ZeeNucfunc if nuc else ZeeNVfunc
         
-    return ham.Hamiltonian(Zeemats, Zeepars, Zeefunc)
+    return Hamiltonian(Zeemats, Zeepars, Zeefunc)
 
 def Hyperfine(qsystem, NV = 15):
     
@@ -63,7 +63,7 @@ def Hyperfine(qsystem, NV = 15):
     HFmats = {'A': A_N15 if NV == 15 else A_N14, 'Sz': qsystem.getSz()[0], 'Iz': qsystem.getSz()[1], 
               'Sx': qsystem.getSx()[0], 'Ix': qsystem.getSx()[1], 'Sy': qsystem.getSy()[0], 'Iy': qsystem.getSy()[1]}
     
-    return ham.Hamiltonian(HFmats, None, HFfunc)
+    return Hamiltonian(HFmats, None, HFfunc)
     
 def dotproduct(vecV, vecU):
     #
