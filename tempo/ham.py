@@ -120,7 +120,7 @@ class Hamiltonian():
         elif type(Hmats) == qutip.qobj.Qobj:
             self._Hmats = Hmats
             self._Hfunc = lambda mat, pars: mat
-        elif type(Hmats) == ndarray:
+        elif type(Hmats) == np.ndarray:
             self._Hmats = Hmats
             self._Hfunc = lambda mat, pars: mat
         else: 

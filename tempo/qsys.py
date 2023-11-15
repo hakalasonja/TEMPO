@@ -11,7 +11,7 @@ The Quantum System (Qsys) class for representing a quantum system of one or more
 #
 # Import Python Packages
 #
-from qutip import identity, jmat, tensor, basis
+from qutip import identity, jmat, tensor, basis, qobj
 import os
 import numpy as np
 
@@ -159,17 +159,17 @@ class Qsys:
             
     def setSx(self, Sx):
         
-        if type(Sx) == qutip.qobj.Qobj:
+        if type(Sx) == qobj.Qobj:
             self._Sx = Sx
             
     def setSy(self, Sy):
          
-        if type(Sy) == qutip.qobj.Qobj:
+        if type(Sy) == qobj.Qobj:
              self._Sy = Sy
              
     def setSz(self, Sz):
          
-        if type(Sz) == qutip.qobj.Qobj:
+        if type(Sz) == qobj.Qobj:
              self._Sz = Sz
             
     def deldimensions(self):
