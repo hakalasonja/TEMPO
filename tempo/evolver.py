@@ -484,7 +484,7 @@ class Evolver():
         
     def setstatham(self, statham):
         
-        if type(statham) == ham.Hamiltonian:
+        if type(statham) == Hamiltonian:
             self._statham = statham.getH()
         elif type(statham) == qobj.Qobj:
             self._statham = statham
