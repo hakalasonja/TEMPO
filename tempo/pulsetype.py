@@ -102,7 +102,7 @@ class Pulsetype():
         # pulsemat can be a Hamiltonian object or a quantum object
         # add also array option
         
-        if type(pulsemat) == ham.Hamiltonian:
+        if type(pulsemat) == Hamiltonian:
             self._pulsemat = pulsemat.getH()
         elif type(pulsemat) == qutip.qobj.Qobj:
             self._pulsemat = pulsemat
