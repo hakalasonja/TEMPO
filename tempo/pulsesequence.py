@@ -109,7 +109,7 @@ class Pulsesequence():
         
         if statham == None:
             self._statham = statham
-        elif type(statham) == ham.Hamiltonian:
+        elif type(statham) == Hamiltonian:
             self._statham = statham.getH()
         elif type(statham) == qutip.qobj.Qobj:
             self._statham = statham
