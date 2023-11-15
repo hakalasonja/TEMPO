@@ -54,17 +54,17 @@ class Pulsesequence():
         pulse : :obj:`pulse.Pulse` or list of :obj:`pulse.Pulse`
             Pulse(s) to be added. 
         """
-        if type(pls) == pulse.Pulse:
+        if type(pls) == Pulse:
             self._pulsels.append(pls)
         elif type(pls) == list:
             if len(pls) == 1:
-                if type(pls[0]) == pulse.Pulse:
+                if type(pls[0]) == Pulse:
                     self._pulsels.append(pls[0])
                 else:
                     raise TypeError("Pulse must be a Pulse object")
             else: 
                 for p in pls: 
-                    if type(p) == pulse.Pulse:
+                    if type(p) == Pulse:
                         self._pulsels.append(p)
                     else:
                         raise TypeError("All pulses in list must be Pulse objects")
@@ -98,7 +98,7 @@ class Pulsesequence():
     def setpulsels(self, pulsels):
         if type(pulsels) == list:
             self._pulsels = pulsels
-        elif type(pulsels) == pulse.Pulse:
+        elif type(pulsels) == Pulse:
             self._pulsels = [pulsels]
         elif pulsels == None:
             self._pulsels = []
