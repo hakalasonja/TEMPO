@@ -1,6 +1,6 @@
-.. NVsims documentation master file.
+.. TEMPO documentation master file.
 
-Welcome to NVsims's documentation!
+Welcome to TEMPO's documentation!
 ==================================
 
 .. toctree::
