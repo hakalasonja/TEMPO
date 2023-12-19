@@ -131,7 +131,7 @@ class Hamiltonian():
         ----------
         ops : dict of `qutip.Qobj`, optional
             Dictionary of operators to pass to the callback function. If None, then the dictionary passed in the constructor is used.
-        para,s : dict of float, optional
+        params : dict of float, optional
             Dictionary of scalars to pass to the callback function. If None, then the dictionary passed in the constructor is used.
             
         Returns
