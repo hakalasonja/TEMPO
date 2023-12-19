@@ -6,78 +6,66 @@ Created on Mon Jul 17 19:43:07 2023
 Create time-dependent pulses.
 
 @author: hakalas
+
 """
 
-import qutip
 import os
-from tempo.qsys import Qsys
-from tempo.ham import Hamiltonian
 import numpy as np
-from tempo.pulsetype import Pulsetype
- 
-# add update method: update dictionary using input pulseparams and the string keys from pulsetp
-# update only in init
-# in pulsepars setter, check that all keys of input dict are included in string keys
-# initialize pulsepars dictionary with default values (0)
+from tempo.pulse_recipe import Pulse_recipe
 
-class Pulse(Pulsetype):
+class Pulse():
     """
     A class for creating pulses or time-dependent Hamiltonian objects.
     
-    Pulse extends Pulsetype, but there is a clear distinction between the two. Pulsetype can be summarized as a blueprint, while individual Pulses are created according to the blueprint. Any number of pulses can be created with the same pulsetype, each with different numerical values for the input parameters of the pulse coefficient. Because of this, a :obj:`pulsetype` object must be passed to the Pulse constructor. 
+    One of the attributes of `Pulse` is `Pulse_recipe`, but there is a clear distinction between the two. Pulse_recipe can be summarized as a blueprint (a recipe), while individual pulses are created according to the blueprint. Any number of pulses can be created with the same pulse recipe, each with different numerical values for the input parameters of the pulse coefficient. Because of this, a :obj:`pulse_recipe.Pulse_recipe` object is an attribute of `Pulse`; a `Pulse` object must know what kind of recipe it follows. 
     
-    A dictionary of parameters is also passed in the constructor and used to evaluate the time-dependent coefficient of the pulse. The dictionary should contain all of the entries listed in the pulsetype's `pulseparkeys` list of labels.  
+    A dictionary of parameters is also passed in the constructor and used to evaluate the time-dependent coefficient of the pulse. The dictionary should contain all of the entries listed in the pulserecipe's `pulse_recipe.param_keys` list of labels.  
     
     Parameters
     ----------
-    pulsetp : :obj:`pulsetype.Pulsetype`
-        Pulsetype object to provide a model for the kind of pulse.
-    starttime : float
+    recipe : :obj:`pulse_recipe.Pulse_recipe`
+        Pulse_recipe object to provide a model for the kind of pulse.
+    start_time : float
         Start time of pulse.
     duration : float
         Duration of pulse. 
-    pulsepars : dict of float
-        Dictionary of parameters to be passed in the coefficient function of `pulsetp`. All entries of `pulsetp`'s `pulseparkeys` must be included in the dictionary. 
+    params : dict of float
+        Dictionary of parameters to be passed in the coefficient function of `pulse_recipe`. All entries of `pulse_recipe`'s `param_keys` must be included in the dictionary. 
         
     Attributes
     ----------
-    pulsemat : `qutip.Qobj`
-        Hamiltonian operator for pulse.
-    pulseparkeys: list of str
-        List of names of scalar parameters used in `pulsefunc`. Names are strings.
-    pulsefunc : function
-        Callback function that calculates the time-dependent coefficient using a time `t` and a dictionary of `args`. 
-    starttime : float
+    recipe : `pulse_recipe.Pulse_recipe`
+        `Pulse_recipe` object to provide a model for the kind of pulse.
+    start_time : float
         Start time of pulse.
     duration : float
         Duration of pulse. 
-    endtime : float
+    end_time : float
         End time of pulse.
-    pulsepars : dict of float
-        Dictionary of parameters to be passed in the coefficient function `pulsefunc`.
+    params : dict of float
+        Dictionary of parameters to be passed in the coefficient function `pulse_recipe.func`.
     """
     
-    def __init__(self, pulsetp, starttime = 0, duration = 0, pulsepars = None):
+    def __init__(self, recipe, start_time = 0, duration = 0, params = None):
         """
         Pulse constructor.
         """
         # check if self.pulsefunc == None then set it to lambda t, args: 1 
-        super().__init__(pulsetp.getpulsemat(), pulsetp.getpulseparkeys(), pulsetp.getpulsefunc())
         
-        self._starttime = starttime
-        self.setduration(duration)
-        self._pulsepars = {}
-        self.setendtime(starttime+duration)
+        self.recipe = recipe
+        self._start_time = start_time
+        self.duration = duration
+        self._params = {}
         
-        if pulsepars == None:
-            if len(self._pulseparkeys) != 0:
-                self.updatepars(self._pulseparkeys, [0]*len(self._pulseparkeys))
+        if params == None:
+            if len(self._recipe.param_keys) != 0:
+                self.updatepars(self._recipe.param_keys, [0]*len(self._recipe.param_keys))
         else:
-            self.setpulsepars(pulsepars)
+            self._params = params
         
-    def updatepars(self, keys, values):
+    def update_params(self, keys, values):
         """
-        Add key-value pairs to `pulsepars`. `keys` and `values` should be the same length. Elements are paired by index. 
+        Add key-value pairs to `params`. `keys` and `values` should be the same length. Elements are paired by index. 
         
         Parameters
         ----------
@@ -89,106 +77,133 @@ class Pulse(Pulsetype):
         for i in range(len(keys)):
             self._pulsepars.update({keys[i]: values[i]})
         
-    def evalcoeff(self, t, args = {}):
+    def eval_coeff(self, t, args = {}):
         """
-        Evaluate coefficient of pulse at time `t`. Overrides :obj:`Pulsetype`'s method. If `args` is None then `pulsepars` is used as parameter input for coefficient function. 
+        Evaluate coefficient of pulse at time `t`. If `args` is not given, then `params` is used as parameter input for coefficient function. If the pulse is off at time t, the coefficient is 0.
         
         Parameters
         ----------
         t : float
             The time for which to evaluate the coefficient.
-        args : dict of float
-            Parameters to use in `pulsefunc` to evaluate coefficient. If None, `pulsepars` is used.
+        args : dict of float, optional
+            Parameters to use in `recipe.coeff_func` to evaluate coefficient. If not given, `params` is used.
             
         Returns
-        ----------
+        -------
         pulsecoeff : float
             Pulse coefficient at time `t`.
         """
-        # pulsepars must be a dictionary
+        # params must be a dictionary
         # tlist can be a list or a scalar (only scalar right now)
 
         if len(args) == 0:
-            pars = self._pulsepars
+            params = self._params
         else:
-            pars = args
+            params = args
         
         pulsecoeff = 0
         
-        if t >= self._starttime and t <= self._endtime:
-            pulsecoeff = self._pulsefunc(t, pars)
+        if t >= self._start_time and t <= self._end_time:
+            f = self._recipe.coeff_func
+            pulsecoeff = f(t, params)
         
         return pulsecoeff
     
-    def serial_evalcoeff(self, t, args = {}):
-        return self._pulsefunc(t, self._pulsepars)
+    def serial_eval_coeff(self, t, args = {}):
+        """
+        Evaluate coefficient of pulse at time `t`. Differs from `eval_coeff` in that the start- and endtimes of the pulse are not taken into account; the coefficient will be evaluated whether the pulse is on or off. This method is called by the method `evolver.serial_evolve` in the :obj:`evolver.Evolver` class. 
         
-    
-#     def checkpulsefunc(self, t = 0):
-        
-#         # read about type hints
-        
-#         if type(t) == type(self.evalcoeff(t)):
-#             return 1
-#         else:
-#             raise TypeError("")
+        Parameters
+        ----------
+        t : float
+            The time for which to evaluate the coefficient.
+        args : dict of float, default = {}
+            Always an empty dictionary. `params` is used to evaluate the coefficient via `recipe.coeff_func`
+            
+        Returns
+        -------
+        pulsecoeff : float
+            Pulse coefficient at time `t`.
+        """ 
+        f = self._recipe.coeff_func
+        return f(t, self._params)
 
-    def getstarttime(self):
-        return self._starttime
+    @property
+    def recipe(self):
+        return self._recipe
     
-    def getduration(self):
+    @recipe.setter
+    def recipe(self, recipe):
+        if type(recipe) == Pulse_recipe:
+            self._recipe = recipe
+        else:
+            raise TypeError('pulserecipe must be a member of the Pulserecipe class')
+
+    @recipe.deleter
+    def recipe(self):
+        del self._recipe
+    
+    @property
+    def start_time(self):
+        return self._start_time
+    
+    @start_time.setter
+    def start_time(self, start_time):
+        self._start_time = start_time
+        
+    @start_time.deleter
+    def start_time(self):
+        del self._start_time
+    
+    @property
+    def duration(self):
         return self._duration
     
-    def getendtime(self):
-        return self._endtime
-    
-    def getpulsepars(self):
-        return self._pulsepars
-    
-    def setstarttime(self, starttime):
-        self._starttime = starttime
-        
-    def setduration(self, duration):
+    @duration.setter
+    def duration(self, duration):
         self._duration = duration
-        self._endtime = self._starttime+duration
+        self._end_time = self._start_time+duration
         
-    def setendtime(self, endtime):
+    @duration.deleter
+    def duration(self):
+        del self._duration
+    
+    @property
+    def end_time(self):
+        return self._end_time
+    
+    @end_time.setter
+    def end_time(self, end_time):
         
-        if endtime < self._starttime:
+        if end_time < self._start_time:
             raise ValueError("Start time must be before end time")
         else:
-            self._endtime = endtime
-            self._duration = endtime-self._starttime
+            self._end_time = end_time
+            self._duration = end_time-self._start_time
+     
+    @end_time.deleter
+    def end_time(self):
+        del self._end_time
+    
+    @property
+    def params(self):
+        return self._params
+
+    @params.setter
+    def params(self, params):
+ 
         
-    def setpulsepars(self, pulsepars):
-        
-        # finish exception 
-        
-        if type(pulsepars) == dict:
+        if type(params) == dict:
             
-            for key in self._pulseparkeys:
-                if key not in pulsepars.keys():
+            for key in self._recipe.param_keys:
+                if key not in params.keys():
                     raise KeyError("{key} value not specified".format(key = key))
             
-            self.updatepars(list(pulsepars.keys()), list(pulsepars.values()))
+            self.updatepars(list(params.keys()), list(params.values()))
             
         else: 
             raise TypeError("Pulse parameters must be in a dictionary")
-        
-    def delstarttime(self):
-        del self._starttime
-        
-    def delduration(self):
-        del self._duration
-        
-    def delendtime(self):
-        del self._endtime
-        
-    def delpulsepars(self):
-        del self._pulsepars
-        
-    starttime = property(getstarttime, setstarttime, delstarttime)
-    duration = property(getduration, setduration, delduration)
-    endtime = property(getendtime, setendtime, delendtime)
-    pulsepars = property(getpulsepars, setpulsepars, delpulsepars)
     
+    @params.deleter
+    def params(self):
+        del self._params
