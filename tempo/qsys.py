@@ -50,7 +50,7 @@ class Qsys:
         """
         Qsys constructor.
         """
-        self.setdimensions(dimensions)
+        self.dimensions = dimensions
         self._numparticles = len(self._dimensions)
         
         self._stot = [(self._dimensions[i]-1)/2 for i in np.arange(self._numparticles)]
@@ -111,25 +111,12 @@ class Qsys:
         
         return basisstates
     
-    def getdimensions(self):
+    @property
+    def dimensions(self):
         return self._dimensions
     
-    def getnumparticles(self):
-        return self._numparticles
-    
-    def getstot(self):
-        return self._stot
-    
-    def getSx(self):
-        return self._Sx
-    
-    def getSy(self):
-        return self._Sy
-    
-    def getSz(self):
-        return self._Sz
-    
-    def setdimensions(self, dimensions):
+    @dimensions.setter
+    def dimensions(self, dimensions):
         
         # dimensions must be a tuple
         
@@ -142,58 +129,81 @@ class Qsys:
             self._Sz = self.oprs('z')
         else:
             raise TypeError("Dimensions must be a tuple")
-            
-    def setnumparticles(self, num):
+    
+    @dimensions.deleter 
+    def dimensions(self):
+        del self._dimensions
+    
+    @property
+    def numparticles(self):
+        return self._numparticles
+    
+    @numparticles.setter
+    def numparticles(self, num):
         
         if type(num) == int:
             self._numparticles = num
         else:
             raise TypeError("Number of particles must be an integer")
-            
-    def setstot(self, ls):
+     
+    @numparticles.deleter 
+    def numparticles(self):
+        del self._numparticles
+    
+    @property
+    def stot(self):
+        return self._stot
+    
+    @stot.setter
+    def stot(self, ls):
         
         if type(ls) == list:
             self._stot = ls
         else: 
             raise TypeError("Maximum spins must be stored in a list")
-            
-    def setSx(self, Sx):
+    
+    @stot.deleter 
+    def stot(self):
+        del self._stot
+    
+    @property
+    def Sx(self):
+        return self._Sx
+    
+    @Sx.setter
+    def Sx(self, Sx):
         
         if type(Sx) == qobj.Qobj:
             self._Sx = Sx
-            
-    def setSy(self, Sy):
+       
+    @Sx.deleter 
+    def Sx(self):
+        del self._Sx
+    
+    @property
+    def Sy(self):
+        return self._Sy
+    
+    @Sy.setter
+    def Sy(self, Sy):
          
         if type(Sy) == qobj.Qobj:
              self._Sy = Sy
-             
-    def setSz(self, Sz):
+       
+    @Sy.deleter 
+    def Sy(self):
+        del self._Sy
+    
+    @property
+    def Sz(self):
+        return self._Sz
+    
+    @Sz.setter       
+    def Sz(self, Sz):
          
         if type(Sz) == qobj.Qobj:
              self._Sz = Sz
-            
-    def deldimensions(self):
-        del self._dimensions
-        
-    def delnumparticles(self):
-        del self._numparticles
-        
-    def delstot(self):
-        del self._stot
-        
-    def delSx(self):
-        del self._Sx
-        
-    def delSy(self):
-        del self._Sy
-        
-    def delSz(self):
-        del self._Sz
-    
-    dimensions = property(getdimensions, setdimensions, deldimensions)
-    Sx = property(getSx, setSx, delSx)
-    Sy = property(getSy, setSy, delSy)
-    Sz = property(getSz, setSz, delSz)
-    numparticles = property(getnumparticles, setnumparticles, delnumparticles)
 
-        
+    @Sz.deleter   
+    def Sz(self):
+        del self._Sz
