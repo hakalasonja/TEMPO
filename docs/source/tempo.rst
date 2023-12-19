@@ -12,10 +12,10 @@ tempo.evolver module
    :undoc-members:
    :show-inheritance:
 
-tempo.ham module
+tempo.hamiltonian module
 --------------------
 
-.. automodule:: tempo.ham
+.. automodule:: tempo.hamiltonian
    :members:
    :undoc-members:
    :show-inheritance:
@@ -28,18 +28,18 @@ tempo.pulse module
    :undoc-members:
    :show-inheritance:
 
-tempo.pulsesequence module
+tempo.pulse_sequence module
 ------------------------------
 
-.. automodule:: tempo.pulsesequence
+.. automodule:: tempo.pulse_sequence
    :members:
    :undoc-members:
    :show-inheritance:
 
-tempo.pulsetype module
+tempo.pulse_recipe module
 --------------------------
 
-.. automodule:: tempo.pulsetype
+.. automodule:: tempo.pulse_recipe
    :members:
    :undoc-members:
    :show-inheritance:
