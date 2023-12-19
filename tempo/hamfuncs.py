@@ -6,10 +6,9 @@ Created on Mon Jul 10 19:52:34 2023
 @author: hakalas
 """
 
-from qutip import *
+from qutip import jmat, identity, tensor
 import os
-from tempo.qsys import Qsys
-from tempo.ham import Hamiltonian
+from tempo.hamiltonian import Hamiltonian
 import numpy as np
 
 def ZFSfunc(Hmats, Hpars):
@@ -29,7 +28,7 @@ def ZFS(qsystem):
     # assumes that ZFS is on particle 1 in the qsystem tuple "dimensions"
     
     ZFSpars = {'coeff': 2*np.pi, 'ZFSconst': 2.87e3}
-    ZFSmats = {'Sz': qsystem.getSz()[0]}
+    ZFSmats = {'Sz': qsystem.Sz[0]}
     
     return Hamiltonian(ZFSmats, ZFSpars, ZFSfunc)
 
@@ -42,12 +41,12 @@ def Zeeman(qsystem, Bfield, nuc = False, NV = 15):
     
     if nuc:
         Zeepars['gammaNuc'] = -431.6e-6 if NV == 15 else 307.7e-6 
-        Zeepars['P1dims'] = qsystem.getdimensions()[0]
-        Zeemats['S2'] = jmat(qsystem.getstot()[1])
+        Zeepars['P1dims'] = qsystem.dimensions[0]
+        Zeemats['S2'] = jmat(qsystem.stot[1])
     else:
         Zeepars['gammaNV'] = -2.8025
-        Zeepars['P2dims'] = qsystem.getdimensions()[1]
-        Zeemats['S1'] = jmat(qsystem.getstot()[0])
+        Zeepars['P2dims'] = qsystem.dimensions[1]
+        Zeemats['S1'] = jmat(qsystem.stot[0])
         
     Zeefunc = ZeeNucfunc if nuc else ZeeNVfunc
         
@@ -60,8 +59,8 @@ def Hyperfine(qsystem, NV = 15):
     A_N15 = np.array([[3.65,0,0],[0,3.65,0],[0,0,3.03]]) # Nitrogen-15 HF tensor
     A_N14 = np.array([[-2.62,0,0],[0,-2.62,0],[0,0,-2.162]]) # Nitrogen-14 HF tensor
     
-    HFmats = {'A': A_N15 if NV == 15 else A_N14, 'Sz': qsystem.getSz()[0], 'Iz': qsystem.getSz()[1], 
-              'Sx': qsystem.getSx()[0], 'Ix': qsystem.getSx()[1], 'Sy': qsystem.getSy()[0], 'Iy': qsystem.getSy()[1]}
+    HFmats = {'A': A_N15 if NV == 15 else A_N14, 'Sz': qsystem.Sz[0], 'Iz': qsystem.Sz[1], 
+              'Sx': qsystem.Sx[0], 'Ix': qsystem.Sx[1], 'Sy': qsystem.Sy[0], 'Iy': qsystem.Sy[1]}
     
     return Hamiltonian(HFmats, None, HFfunc)
     
