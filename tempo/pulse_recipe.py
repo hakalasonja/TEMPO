@@ -3,7 +3,7 @@
 """
 Created on Mon Jul 10 18:20:45 2023
 
-The Pulserecipe class to create time-dependent pulse models. 
+The Pulse_recipe class to create time-dependent pulse models. 
 
 @author: hakalas
 
@@ -18,41 +18,41 @@ class Pulse_recipe():
     """
     A class for defining types of pulses.
     
-    The Pulserecipe class is used to create models, or recipes, for different types of pulses or time-dependent Hamiltonians. The Pulse class is then used to create individual pulse instances. 
+    The Pulse_recipe class is used to create models, or recipes, for different types of pulses or time-dependent Hamiltonians. The `pulse.Pulse` class is then used to create individual pulse instances. 
     
-    The Pulserecipe object is composed of a time-dependent coefficient and an operator. The constructor takes the operator, a list of scalar parameter names, and a callback function. The function, which calculates the time-dependent coefficient of the operator at a time t, must have a signature ``f(t: float, args: dict) -> float``, for example
+    The Pulse_recipe object is composed of a time-dependent coefficient and an operator. The constructor takes the operator, a list of parameter names, and a callback function. The function, which calculates the time-dependent coefficient of the operator at a time t, must have a signature ``f(t: float, args: dict) -> float``, for example
     
     .. code-block:: python
         
         def func(t, args):
             return args['amp']*np.cos(2*np.pi*args['freq']*t)
             
-    In this example the list of parameter names passed would be ``keys = ['amp', 'freq']``. The dictionary `args` is not part of the Pulserecipe class; it is incorporated in the `Puls`' class, where one can evaluate the numerical value of the callback function based on a particular dictionary of values. The callback function should not include checks for whether the pulse is on or off; this can be achieved by defining the particular pulse's starttime and endtime in the `Pulse` class.
+    In this example the list of parameter names passed would be ``keys = ['amp', 'freq']``. The dictionary `args` is not part of the Pulse_recipe class; it is incorporated in the `pulse.Pulse` class, where one can evaluate the numerical value of the callback function based on a particular dictionary of values. The callback function should not include checks for whether the pulse is on or off; this can be achieved by defining the particular pulse's start time and end time in the `pulse.Pulse` class.
     
     Parameters 
     ----------
-    op : :obj:`ham.Hamiltonian` or `qutip.Qobj`
-        Hamiltonian operator for pulse.
+    ham : :obj:`hamiltonian.Hamiltonian`
+        Hamiltonian instance that describes the operator part of the pulse.
     param_keys: list of str
-        List of names of scalar parameters used in `coeff_func`. Names should be strings.
+        List of names of parameters used in `coeff_func`. Names should be strings.
     coeff_func : function
         Callback function that calculates the time-dependent coefficient using a time `t` and a dictionary of `args`.
         
     Attributes
     ----------
-    op : `qutip.Qobj`
-        Hamiltonian operator for pulse.
+    ham : :obj:`hamiltonian.Hamiltonian`
+        Hamiltonian instance that describes the operator part of the pulse.
     param_keys: list of str
-        List of names of scalar parameters used in `coeff_func`. Names should be strings.
+        List of names of parameters used in `coeff_func`. Names should be strings.
     coeff_func : function
         Callback function that calculates the time-dependent coefficient using a time `t` and a dictionary of `args`.
     """
     
-    def __init__(self, op = None, param_keys = None, coeff_func = None):
+    def __init__(self, ham = None, param_keys = None, coeff_func = None):
         """
-        Pulserecipe constructor.
+        Pulse_recipe constructor.
         """
-        self.op = op # Hamiltonian or Qobj input, but self._op is a Qobj
+        self.ham = ham # Hamiltonian or Qobj
         self.param_keys = param_keys # list of strings (key names for dictionary of parameters)
         self.coeff_func = coeff_func # function
             
@@ -64,8 +64,8 @@ class Pulse_recipe():
         ----------
         t : float
             The time for which to evaluate the coefficient.
-        pars : dict of float
-            Parameters to use in `pulsefunc` to evaluate coefficient.
+        params : dict of float
+            Parameters to use in `coeff_func` to evaluate coefficient.
             
         Returns
         -------
@@ -79,27 +79,23 @@ class Pulse_recipe():
         return coeff
      
     @property
-    def op(self):
-        return self._op
+    def ham(self):
+        return self._ham
     
-    @op.setter
-    def op(self, op):
+    @ham.setter
+    def ham(self, ham):
         
-        # op can be a Hamiltonian object or a quantum object
-        
-        if type(op) == Hamiltonian:
-            self._op = op.H
-        elif type(op) == qobj.Qobj:
-            self._op = op
-        elif op == None:
-            self._op = op
+        if isinstance(ham, Hamiltonian):
+            self._ham = ham
+        elif ham == None:
+            self._ham = ham
         else: 
-            print(type(op))
-            raise TypeError("Matrix must be a Hamiltonian object or a Quantum object")
+            print(type(ham))
+            raise TypeError("ham must be a Hamiltonian instance")
     
-    @op.deleter
-    def op(self):
-        del self._op
+    @ham.deleter
+    def ham(self):
+        del self._ham
       
     @property
     def param_keys(self):
@@ -108,7 +104,7 @@ class Pulse_recipe():
     @param_keys.setter
     def param_keys(self, param_keys):
         
-        if type(param_keys) == list:
+        if isinstance(param_keys, list):
             self._param_keys = param_keys
         elif param_keys == None:
             self._param_keys = []
