@@ -24,36 +24,36 @@ class Evolver():
     
     Parameters 
     ----------
-    state_init : `qutip.Qobj`
+    state_init : :obj:`qutip.Qobj`
         Initial state vector or density matrix.
     pulse_seq : :obj:`pulse_sequence.Pulse_sequence`
         Sequence of pulses to be applied to initial state.
     tlist : list of float
         List of times at which to evaluate the system's state or the expectation value of the operator(s) in `e_ops`. 
-    Hstat : :obj:`hamiltonian.Hamiltonian` or `qutip.Qobj`, optional
+    Hstat : :obj:`hamiltonian.Hamiltonian` or :obj:`qutip.Qobj`, optional
         Time-independent Hamiltonian that applies at all times in the simulation.
-    c_ops : list of `qutip.Qobj`
+    c_ops : list of :obj:`qutip.Qobj`
         List of collapse operators.
-    e_ops : list of `qutip.Qobj`
+    e_ops : list of :obj:`qutip.Qobj` or callback functions
         List of operators for which to evaluate expectation values.
-    opts : `qutip.Options`
+    opts : :obj:`qutip.Options`
         Options for `qutip.mesolve`.
     
     Attributes
     ----------
-    state_init : `qutip.Qobj`
+    state_init : :obj:`qutip.Qobj`
         Initial state vector or density matrix.
     pulse_seq : :obj:`pulse_sequence.Pulse_sequence`
         Sequence of pulses to be applied to initial state.
     tlist : list of float
         List of times at which to evaluate the system's state or the expectation value of the operator(s) in `e_ops`. 
-    Hstat : `qutip.Qobj`
+    Hstat : :obj:`qutip.Qobj`
         Time-independent Hamiltonian that applies at all times in the simulation.
-    c_ops : list of `qutip.Qobj`
+    c_ops : list of :obj:`qutip.Qobj`
         List of collapse operators.
-    e_ops : list of `qutip.Qobj`
+    e_ops : list of :obj:`qutip.Qobj` or callback functions
         List of operators for which to evaluate expectation values.
-    opts : `qutip.Options`
+    opts : :obj:`qutip.Options`
         Options for `mesolve`.
     """
     
@@ -73,8 +73,8 @@ class Evolver():
         
         Returns
         -------
-        H : list of `qutip.Qobj` or list of [`qutip.Qobj`, function]
-            List of `qutip.Qobj` objects and [`qutip.Qobj`, callback function] pairs.
+        H : list of :obj:`qutip.Qobj` or list of [:obj:`qutip.Qobj`, function]
+            List of :obj:`qutip.Qobj` instances and [:obj:`qutip.Qobj`, callback function] pairs.
             List of Hamiltonian terms and their coefficients at each point in time.
         """
         H = []
@@ -117,7 +117,7 @@ class Evolver():
         tlist : list of float
             List of times at which to evaluate the system's state or the expectation value of the operator(s) in `e_ops`. 
         pulse_seq : `pulse_sequence.Pulse_sequence` 
-            Pulse sequence object containing the pulses for this simulation.
+            Pulse sequence instance containing the pulses for this simulation.
         c_ops : list of `qutip.Qobj`
             List of collapse operators.
         e_ops : list of `qutip.Qobj`
@@ -169,10 +169,6 @@ class Evolver():
         return result
             
     def serial_evolve(self, pulse_seq, state_init, tlist, c_ops, e_ops, opts, t_rtol):
-
-#         timediff = np.diff(tlist)
-#         if np.min(timediff) < t_tol:
-#             raise ValueError("tlist values too close together; try decreasing t_rel_tol or changing tlist")
 
         for i in np.arange(len(tlist)-1):
             if isclose(tlist[i], tlist[i+1], rel_tol=t_rtol):
@@ -515,7 +511,7 @@ class Evolver():
         if isinstance(pulse_seq, Pulse_sequence):
             self._pulse_seq = pulse_seq
         else:
-            raise TypeError('Pulse sequence must be a Pulse_sequence object')
+            raise TypeError('Pulse sequence must be a Pulse_sequence instance')
         
     @pulse_seq.deleter
     def pulse_seq(self):
@@ -533,7 +529,7 @@ class Evolver():
             self._Hstat = Hstat
         else: 
             print(type(Hstat))
-            raise TypeError("Static Hamiltonian operator must be a Hamiltonian object or a Quantum object")
+            raise TypeError("Static Hamiltonian operator must be a Hamiltonian instance or a QuTiP Qobj instance")
     
     @Hstat.deleter
     def Hstat(self):
