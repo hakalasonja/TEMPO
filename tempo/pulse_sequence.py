@@ -21,22 +21,22 @@ class Pulse_sequence():
     """
     Class for creating sequences or lists of pulses.
     
-    A Pulsesequence object stores all pulses applied to a system during a single simulation. If there is a static (time-independent) Hamiltonian that applies throughout the entire simulation, this should be passed to the constructor separately. 
+    A Pulse sequence object stores all pulses applied to a system during a single simulation. If there is a static (time-independent) Hamiltonian that applies throughout the entire simulation, this should be passed to the constructor separately. 
     
     The pulses may be added all at once in a list in the constructor, or they may be added one by one after the initialization of the pulse sequence.
     
     Parameters
     ----------
     pulses : list of :obj:`pulse.Pulse` 
-        List of :obj:`pulse.Pulse` objects that make up the pulse sequence. Pulses do not have to be ordered in any way.
-    Hstat : :obj:`hamiltonian.Hamiltonian` or `qutip.Qobj`, optional
+        List of :obj:`pulse.Pulse` instances that make up the pulse sequence. Pulses do not have to be ordered in any way.
+    Hstat : :obj:`hamiltonian.Hamiltonian` or :obj:`qutip.Qobj`, optional
         Time-independent Hamiltonian that applies at all times in the simulation.
     
     Attributes
     ----------
     pulses : list of :obj:`pulse.Pulse`
-        List of :obj:`pulse.Pulse` objects that make up the pulse sequence. 
-    Hstat : `qutip.Qobj`
+        List of :obj:`pulse.Pulse` instances that make up the pulse sequence. 
+    Hstat : :obj:`qutip.Qobj`
         Time-independent Hamiltonian that applies at all times in the simulation.
     """
     
@@ -54,16 +54,16 @@ class Pulse_sequence():
         pls : :obj:`pulse.Pulse` or list of :obj:`pulse.Pulse`
             Pulse(s) to be added. 
         """
-        if type(pls) == Pulse:
+        if isinstance(pls, Pulse):
             self._pulses.append(pls)
-        elif type(pls) == list:
+        elif isinstance(pls, list):
             for p in pls: 
-                if type(p) == Pulse:
+                if isinstance(p, Pulse):
                     self._pulses.append(p)
                 else:
-                    raise TypeError("All pulses in list must be Pulse objects")
+                    raise TypeError("All pulses in list must be Pulse instances")
         else: 
-            raise TypeError("Pulses must be Pulse objects. Multiple pulses must be in a list") 
+            raise TypeError("Pulses must be Pulse instances. Multiple pulses must be in a list") 
                
     def remove_pulse(self, pls):
         """
@@ -74,16 +74,16 @@ class Pulse_sequence():
         pls : :obj:`pulse.Pulse` or list of :obj:`pulse.Pulse`
             Pulse(s) to be removed. 
         """
-        if type(pls) == Pulse:
+        if isinstance(pls, Pulse):
             self._pulses.remove(pls)
-        elif type(pls) == list:
+        elif isinstance(pls, list):
             for p in pls: 
-                if type(p) == Pulse:
+                if isinstance(p, Pulse):
                     self._pulses.remove(p)
                 else:
-                    raise TypeError("All pulses in list must be Pulse objects")
+                    raise TypeError("All pulses in list must be Pulse instances")
         else: 
-            raise TypeError("Pulses must be Pulse objects. Multiple pulses must be in a list") 
+            raise TypeError("Pulses must be Pulse instances. Multiple pulses must be in a list") 
         
     def timing_info(self):
         """
@@ -110,9 +110,9 @@ class Pulse_sequence():
     
     @pulses.setter
     def pulses(self, pulses):
-        if type(pulses) == list:
+        if isinstance(pulses, list):
             self._pulses = pulses
-        elif type(pulses) == Pulse:
+        elif isinstance(pulses, Pulse):
             self._pulses = [pulses]
         elif pulses == None:
             self._pulses = []
@@ -132,13 +132,13 @@ class Pulse_sequence():
         
         if Hstat == None:
             self._Hstat = Hstat
-        elif type(Hstat) == Hamiltonian:
+        elif isinstance(Hstat, Hamiltonian):
             self._Hstat = Hstat.H
-        elif type(Hstat) == qobj.Qobj:
+        elif isinstance(Hstat, qobj.Qobj):
             self._Hstat = Hstat
         else: 
             print(type(Hstat))
-            raise TypeError("Operator must be a Hamiltonian object or a Quantum object")
+            raise TypeError("Operator must be a Hamiltonian instance or a QuTiP Qobj instance")
     
     @Hstat.deleter
     def Hstat(self):
