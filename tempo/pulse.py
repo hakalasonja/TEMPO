@@ -12,6 +12,7 @@ Create time-dependent pulses.
 import os
 import numpy as np
 from tempo.pulse_recipe import Pulse_recipe
+from tempo.hamiltonian import Hamiltonian
 
 class Pulse():
     """
