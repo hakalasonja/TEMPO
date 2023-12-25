@@ -16,9 +16,6 @@ from tempo.pulse_sequence import Pulse_sequence
 import numpy as np
 from math import isclose
 
-#TODO:
-# how to add expectation values to Result object? Unclear what to do in the case where e_ops are callback functions
-
 class Evolver():
     """
     Time-evolution of a state under a pulse sequence.
@@ -88,7 +85,7 @@ class Evolver():
             H.append(pulse_seq.Hstat)
             is_Hstat = True
         for pulse in pulse_seq.pulses:
-            H.append([pulse.recipe.op, pulse.eval_coeff])
+            H.append([pulse.ham.H, pulse.eval_coeff])
             
         if len(pulse_seq.pulses) == 0 and is_Hstat:
             H = H[0]
@@ -100,10 +97,10 @@ class Evolver():
 
         if safe:
             for pulse in pulselist:
-                H.append([pulse.recipe.op, pulse.eval_coeff])
+                H.append([pulse.ham.H, pulse.eval_coeff])
         else:
             for pulse in pulselist:
-                H.append([pulse.recipe.op, pulse.serial_eval_coeff])
+                H.append([pulse.ham.H, pulse.serial_eval_coeff])
 
         return H
     
@@ -277,10 +274,35 @@ class Evolver():
             #exp = np.delete(exp, 0, 1)
 
             to_user_states += states
-            if e_ops == None or len(e_ops) == 0:
+            
+            is_e_ops = False
+            if isinstance(e_ops, qobj.Qobj):
+                to_user_expect = [expect(e_ops, to_user_states)]
+                is_e_ops = True
+            elif callable(e_ops):
+                to_user_expect = [] 
+                for t_ind in np.arange(len(tlist)): 
+                    to_user_expect.append(e_ops(t_ind, to_user_states[t_ind])) 
+                    
+                is_e_ops = True
+            elif e_ops == None or len(e_ops) == 0:
                 to_user_expect = []
             else:
-                to_user_expect = expect(e_ops, to_user_states)
+                to_user_expect = []
+                for op_ind in np.arange(len(e_ops)):
+                    op = e_ops[op_ind]
+                    if not isinstance(op, qobj.Qobj) and callable(op):
+                        to_user_expect.append(np.zeros(len(tlist), dtype = complex))
+                        for t_ind in np.arange(len(tlist)):
+                            to_user_expect[op_ind][t_ind] = op(t_ind, to_user_states[t_ind])
+                    else:
+                        to_user_expect.append(expect(op, to_user_states))
+                is_e_ops = True
+                
+             
+            if is_e_ops:
+                to_user_states = []
+                    
             
         to_user = solver.Result()
         to_user.solver = res.solver
@@ -418,10 +440,34 @@ class Evolver():
             #exp = [row[1:] for row in exp]
 
             to_user_states += states
-            if e_ops == None or len(e_ops) == 0:
+            
+            is_e_ops = False
+            if isinstance(e_ops, qobj.Qobj):
+                to_user_expect = [expect(e_ops, to_user_states)]
+                is_e_ops = True
+            elif callable(e_ops):
+                to_user_expect = [] 
+                for t_ind in np.arange(len(tlist)): 
+                    to_user_expect.append(e_ops(t_ind, to_user_states[t_ind])) 
+                    
+                is_e_ops = True
+            elif e_ops == None or len(e_ops) == 0:
                 to_user_expect = []
             else:
-                to_user_expect = expect(e_ops, to_user_states)
+                to_user_expect = []
+                for op_ind in np.arange(len(e_ops)):
+                    op = e_ops[op_ind]
+                    if not isinstance(op, qobj.Qobj) and callable(op):
+                        to_user_expect.append(np.zeros(len(tlist), dtype = complex))
+                        for t_ind in np.arange(len(tlist)):
+                            to_user_expect[op_ind][t_ind] = op(t_ind, to_user_states[t_ind])
+                    else:
+                        to_user_expect.append(expect(op, to_user_states))
+                is_e_ops = True
+                
+             
+            if is_e_ops:
+                to_user_states = []
             
         to_user = solver.Result()
         to_user.solver = res.solver
@@ -466,7 +512,7 @@ class Evolver():
     
     @pulse_seq.setter
     def pulse_seq(self, pulse_seq):
-        if type(pulse_seq) == Pulse_sequence:
+        if isinstance(pulse_seq, Pulse_sequence):
             self._pulse_seq = pulse_seq
         else:
             raise TypeError('Pulse sequence must be a Pulse_sequence object')
@@ -481,9 +527,9 @@ class Evolver():
     
     @Hstat.setter
     def Hstat(self, Hstat):
-        if type(Hstat) == Hamiltonian:
+        if isinstance(Hstat, Hamiltonian):
             self._Hstat = Hstat.H
-        elif type(Hstat) == qobj.Qobj:
+        elif isinstance(Hstat, qobj.Qobj):
             self._Hstat = Hstat
         else: 
             print(type(Hstat))
