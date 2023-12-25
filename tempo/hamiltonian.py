@@ -29,41 +29,43 @@ class Hamiltonian():
     
     .. code-block:: python
         
-        def func(ops, params):
-            return params['a']/params['b']*ops['C']*ops['D']
+        def func(ops, op_params):
+            return op_params['a']/op_params['b']*ops['C']*ops['D']
             
         ops = {'C': C, 'D': D}
-        params = {'a': a, 'b': b}
+        op_params = {'a': a, 'b': b}
         
     Parameters
     ----------
-    ops : dict of `qutip.Qobj` or `qutip.Qobj`
+    ops : dict of :obj:`qutip.Qobj` or :obj:`qutip.Qobj`
         Dictionary of all operators that make up the final Hamiltonian.
-        If the Hamiltonian has no specified numerical coefficient and is only composed of one operator, the operator may be passed directly as a `qutip.Qobj`. In this case `params` and `func` are not needed as inputs.
-    params: dict, optional
+        If the Hamiltonian has no specified numerical coefficient and is only composed of one operator, the operator may be passed directly as a :obj:`qutip.Qobj`. In this case `params` and `func` are not needed as inputs.
+    op_params: dict, optional
         Dictionary of numerical parameters that make up the coefficient of the final Hamiltonian.
     func : function, optional
         Callback function that takes the operators and parameters to combine.
         
     Attributes
     ----------
-    ops : dict of `qutip.Qobj` or `qutip.Qobj`
+    ops : dict of :obj:`qutip.Qobj` or :obj:`qutip.Qobj`
         Dictionary of all operators that make up the final Hamiltonian.
-    params: dict of float
+    op_params: dict of float
         Dictionary of scalars that make up the coefficient of the final Hamiltonian.
     func : function
         Callback function that takes the operators and scalars to combine.  
-    H : `qutip.Qobj`
+    H : :obj:`qutip.Qobj`
         Time-independent Hamiltonian with a scalar coefficient part and an operator part evaluated via func.
     """
     
-    def __init__(self, ops = {}, params = {}, func = None):
+    def __init__(self, ops = {}, op_params = {}, func = None):
         """
         Hamiltonian constructor.
         """
         self.ops = ops
-        self.params = params
-        self.func = func
+        
+        if not isinstance(ops, qobj.Qobj):
+            self.op_params = op_params
+            self.func = func
     
     @property
     def ops(self):
@@ -75,11 +77,12 @@ class Hamiltonian():
         # Check that ops is a dictionary or Qobj
         # if Qobj, assume the singular operator is returned in func
         
-        if type(ops) == dict:
+        if isinstance(ops, dict):
             self._ops = ops
-        elif type(ops) == qobj.Qobj:
+        elif isinstance(ops, qobj.Qobj):
             self._ops = ops
-            self._func = lambda op, pars: op
+            self._op_params = {}
+            self._func = lambda op, params: op
         else: 
             raise TypeError("Matrices must be in a dictionary")
     
@@ -88,23 +91,23 @@ class Hamiltonian():
         del self._ops
     
     @property
-    def params(self):
+    def op_params(self):
         return self._params
     
     
-    @params.setter
-    def params(self, params):
+    @op_params.setter
+    def op_params(self, op_params):
         
-        if type(params) == dict:
-            self._params = params
-        elif params == None:
-            self._params = {}
+        if isinstance(op_params, dict):
+            self._op_params = op_params
+        elif op_params == None:
+            self._op_params = {}
         else:
             raise TypeError("Parameters must be in a dictionary")
     
-    @params.deleter
-    def params(self):
-        del self._params
+    @op_params.deleter
+    def op_params(self):
+        del self._op_params
       
     @property
     def func(self):
@@ -123,39 +126,36 @@ class Hamiltonian():
         del self._func
     
     @property
-    def H(self, ops = None, params = None):
+    def H(self):
         """
-        Time-independent Hamiltonian term as a `qutip.Qobj`.
+        Time-independent Hamiltonian term as a :obj:`qutip.Qobj`.
         
         Parameters
         ----------
-        ops : dict of `qutip.Qobj`, optional
-            Dictionary of operators to pass to the callback function. If None, then the dictionary passed in the constructor is used.
-        params : dict of float, optional
-            Dictionary of scalars to pass to the callback function. If None, then the dictionary passed in the constructor is used.
+        ops : dict of :obj:`qutip.Qobj`, optional
+            Dictionary of operators to pass to the callback function. If None, then the dictionary `ops` passed in the constructor is used.
+        op_params : dict of float, optional
+            Dictionary of numerical parameters to pass to the callback function. If None, then the dictionary `op_params` passed in the constructor is used.
             
         Returns
         -------
-        ham : `qutip.Qobj`
-            Time-independent Hamiltonian with a scalar coefficient part and an operator part.
+        H : :obj:`qutip.Qobj`
+            Time-independent Hamiltonian with a numerical coefficient part and an operator part.
         """
         # Check if user has assigned a func;
         # if not, if ops only has a single matrix, the default function returns that matrix.
         # If func is unspecified and ops has more than one term, raise error.
-        # add option to pass a single matrix for mats here too. in that case, it shouldn't raise an error when no func was defined.
-        
-        ops = self._ops if ops is None else ops
-        params = self._params if params is None else params
+        # add option to pass a single matrix for ops here too. in that case, it shouldn't raise an error when no func was defined.
         
         if self._func == None:
-            raise TypeError("Hamiltonian function has not been specified")
+            raise ValueError("Hamiltonian function has not been specified")
         else:
-            ham = self._func(ops, params)
-            return ham
+            H = self._func(self._ops, self._op_params)
+            return H
     
     @H.setter
     def H(self, H):
-        if type(H) == qobj.Qobj:
+        if isinstance(H, qobj.Qobj):
             self._H = H
         else:
             raise TypeError("The full Hamiltonian must be a QuTiP Qobj object.")    
