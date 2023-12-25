@@ -216,7 +216,7 @@ class Pulse():
         
     @property
     def ham(self):
-        return self._op_params
+        return self._ham
     
     @ham.setter
     def ham(self, ham):
