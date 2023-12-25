@@ -17,36 +17,38 @@ class Pulse():
     """
     A class for creating pulses or time-dependent Hamiltonian objects.
     
-    One of the attributes of `Pulse` is `Pulse_recipe`, but there is a clear distinction between the two. Pulse_recipe can be summarized as a blueprint (a recipe), while individual pulses are created according to the blueprint. Any number of pulses can be created with the same pulse recipe, each with different numerical values for the input parameters of the pulse coefficient. Because of this, a :obj:`pulse_recipe.Pulse_recipe` object is an attribute of `Pulse`; a `Pulse` object must know what kind of recipe it follows. 
+    One of the attributes of :obj:`Pulse` is `recipe`, which is an instance of :obj:`pulse_recipe.Pulse_recipe`, but there is a clear distinction between the two. Pulse recipe can be summarized as a blueprint (a recipe), while individual pulses are created according to the blueprint. Any number of pulses can be created with the same pulse recipe, but they can differ in the numerical values for the input parameters of the time-dependent coefficient. 
     
-    A dictionary of parameters is also passed in the constructor and used to evaluate the time-dependent coefficient of the pulse. The dictionary should contain all of the entries listed in the pulserecipe's `pulse_recipe.param_keys` list of labels.  
+    A dictionary of parameters is passed in the constructor and used to evaluate the time-dependent coefficient of the pulse. The dictionary should contain all of the entries listed in the pulse recipe's `recipe.param_keys` list of labels.  
     
     Parameters
     ----------
     recipe : :obj:`pulse_recipe.Pulse_recipe`
-        Pulse_recipe object to provide a model for the kind of pulse.
+        Pulse_recipe instance to provide a model for the kind of pulse.
     start_time : float
         Start time of pulse.
     duration : float
         Duration of pulse. 
     params : dict of float
-        Dictionary of parameters to be passed in the coefficient function of `pulse_recipe`. All entries of `pulse_recipe`'s `param_keys` must be included in the dictionary. 
+        Dictionary of parameters to be passed in the coefficient function of `recipe`. All entries of `recipe`'s `param_keys` must be included in the dictionary. 
         
     Attributes
     ----------
-    recipe : `pulse_recipe.Pulse_recipe`
-        `Pulse_recipe` object to provide a model for the kind of pulse.
+    recipe : :obj:`pulse_recipe.Pulse_recipe`
+        :obj:`pulse_recipe.Pulse_recipe` instance to provide a model for the kind of pulse.
     start_time : float
         Start time of pulse.
     duration : float
         Duration of pulse. 
     end_time : float
         End time of pulse.
-    params : dict of float
-        Dictionary of parameters to be passed in the coefficient function `pulse_recipe.func`.
+    coeff_params : dict of float
+        Dictionary of parameters to be passed in the time-dependent coefficient function `pulse_recipe.coeff_func`.
+    ham : :obj:`hamiltonian.Hamiltonian`
+        The operator part of the time-dependent term.
     """
     
-    def __init__(self, recipe, start_time = 0, duration = 0, params = None):
+    def __init__(self, recipe, start_time = 0, duration = 0, coeff_params = None):
         """
         Pulse constructor.
         """
@@ -55,17 +57,20 @@ class Pulse():
         self.recipe = recipe
         self._start_time = start_time
         self.duration = duration
-        self._params = {}
+        self._coeff_params = {}
         
-        if params == None:
+        if coeff_params == None:
             if len(self._recipe.param_keys) != 0:
-                self.updatepars(self._recipe.param_keys, [0]*len(self._recipe.param_keys))
+                self.update_params(self._recipe.param_keys, [0]*len(self._recipe.param_keys))
         else:
-            self._params = params
+            self._coeff_params = coeff_params
+           
+        self.ham = recipe.ham
+
         
     def update_params(self, keys, values):
         """
-        Add key-value pairs to `params`. `keys` and `values` should be the same length. Elements are paired by index. 
+        Add key-value pairs to `coeff_params`. `keys` and `values` should be the same length. Elements are paired by index. 
         
         Parameters
         ----------
@@ -75,18 +80,18 @@ class Pulse():
             List of parameter values.
         """
         for i in range(len(keys)):
-            self._pulsepars.update({keys[i]: values[i]})
+            self._coeff_params.update({keys[i]: values[i]})
         
     def eval_coeff(self, t, args = {}):
         """
-        Evaluate coefficient of pulse at time `t`. If `args` is not given, then `params` is used as parameter input for coefficient function. If the pulse is off at time t, the coefficient is 0.
+        Evaluate coefficient of pulse at time `t`. If `args` is not given, then `coeff_params` is used as parameter input for coefficient function. If the pulse is off at time t, the coefficient is 0.
         
         Parameters
         ----------
         t : float
             The time for which to evaluate the coefficient.
         args : dict of float, optional
-            Parameters to use in `recipe.coeff_func` to evaluate coefficient. If not given, `params` is used.
+            Parameters to use in `recipe.coeff_func` to evaluate coefficient. If not given, `coeff_params` is used.
             
         Returns
         -------
@@ -97,15 +102,15 @@ class Pulse():
         # tlist can be a list or a scalar (only scalar right now)
 
         if len(args) == 0:
-            params = self._params
+            coeff_params = self._coeff_params
         else:
-            params = args
+            coeff_params = args
         
         pulsecoeff = 0
         
         if t >= self._start_time and t <= self._end_time:
             f = self._recipe.coeff_func
-            pulsecoeff = f(t, params)
+            pulsecoeff = f(t, coeff_params)
         
         return pulsecoeff
     
@@ -118,15 +123,16 @@ class Pulse():
         t : float
             The time for which to evaluate the coefficient.
         args : dict of float, default = {}
-            Always an empty dictionary. `params` is used to evaluate the coefficient via `recipe.coeff_func`
+            Always an empty dictionary. `coeff_params` is used to evaluate the coefficient via `recipe.coeff_func`
             
         Returns
         -------
-        pulsecoeff : float
+        coeff : float
             Pulse coefficient at time `t`.
         """ 
         f = self._recipe.coeff_func
-        return f(t, self._params)
+        pulsecoeff = f(t, self._coeff_params)
+        return pulsecoeff
 
     @property
     def recipe(self):
@@ -134,7 +140,7 @@ class Pulse():
     
     @recipe.setter
     def recipe(self, recipe):
-        if type(recipe) == Pulse_recipe:
+        if isinstance(recipe, Pulse_recipe):
             self._recipe = recipe
         else:
             raise TypeError('pulserecipe must be a member of the Pulserecipe class')
@@ -186,24 +192,39 @@ class Pulse():
         del self._end_time
     
     @property
-    def params(self):
-        return self._params
+    def coeff_params(self):
+        return self._coeff_params
 
-    @params.setter
-    def params(self, params):
- 
-        
-        if type(params) == dict:
+    @coeff_params.setter
+    def coeff_params(self, coeff_params):
+
+        if isinstance(coeff_params, dict):
             
             for key in self._recipe.param_keys:
-                if key not in params.keys():
+                if key not in coeff_params.keys():
                     raise KeyError("{key} value not specified".format(key = key))
             
-            self.updatepars(list(params.keys()), list(params.values()))
+            self.update_params(list(coeff_params.keys()), list(coeff_params.values()))
             
         else: 
-            raise TypeError("Pulse parameters must be in a dictionary")
+            raise TypeError("Pulse coefficient parameters must be in a dictionary")
     
-    @params.deleter
-    def params(self):
-        del self._params
+    @coeff_params.deleter
+    def coeff_params(self):
+        del self._coeff_params
+        
+    @property
+    def ham(self):
+        return self._op_params
+    
+    @ham.setter
+    def ham(self, ham):
+        
+        if isinstance(ham, Hamiltonian):        
+            self._ham = ham
+        else:
+            raise TypeError("Pulse Hamiltonian must be a Hamiltonian instance")
+            
+    @ham.deleter
+    def ham(self):
+        del self._ham
