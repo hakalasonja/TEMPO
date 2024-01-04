@@ -527,6 +527,8 @@ class Evolver():
             self._Hstat = Hstat.H
         elif isinstance(Hstat, qobj.Qobj):
             self._Hstat = Hstat
+        elif Hstat == None:
+            self._Hstat = None
         else: 
             print(type(Hstat))
             raise TypeError("Static Hamiltonian operator must be a Hamiltonian instance or a QuTiP Qobj instance")
