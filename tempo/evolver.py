@@ -211,6 +211,8 @@ class Evolver():
 
         num_pulses = len(ps_init.pulses)
 
+        solver_used = False
+        
         k = 0
         
         # loop through segments
@@ -398,6 +400,8 @@ class Evolver():
 
         num_pulses = len(ps_init.pulses)
 
+        solver_used = False
+        
         k = 0
 
         # loop through segments
