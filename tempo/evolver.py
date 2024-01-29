@@ -212,8 +212,7 @@ class Evolver():
         num_pulses = len(ps_init.pulses)
 
         k = 0
-
-
+        
         # loop through segments
         for n in np.arange(len(segment_breaks)-1):
             segment_start = segment_breaks[n]
@@ -242,11 +241,12 @@ class Evolver():
             
             segment_tlist.append(segment_end)
             
+            solver_used = True
             if len(segment_H) == 0 or isclose(segment_start, segment_end, rel_tol= t_rtol):
                 timestamps = len(segment_tlist)
                 states = [state_init]*timestamps
                 #exp = np.repeat(expect(e_ops, state_init), timestamps, axis = 1)
-                
+                solver_used = False
             else:
                 if len(segment_H) == 1 and is_Hstat:
                     res = mesolve(segment_H[0], state_init, segment_tlist, c_ops = c_ops, options = opts)
@@ -271,45 +271,61 @@ class Evolver():
 
             to_user_states += states
             
-            is_e_ops = False
-            if isinstance(e_ops, qobj.Qobj):
-                to_user_expect = [expect(e_ops, to_user_states)]
-                is_e_ops = True
-            elif callable(e_ops):
-                to_user_expect = [] 
-                for t_ind in np.arange(len(tlist)): 
-                    to_user_expect.append(e_ops(t_ind, to_user_states[t_ind])) 
-                    
-                is_e_ops = True
-            elif e_ops == None or len(e_ops) == 0:
-                to_user_expect = []
-            else:
-                to_user_expect = []
-                for op_ind in np.arange(len(e_ops)):
-                    op = e_ops[op_ind]
-                    if not isinstance(op, qobj.Qobj) and callable(op):
-                        to_user_expect.append(np.zeros(len(tlist), dtype = complex))
-                        for t_ind in np.arange(len(tlist)):
-                            to_user_expect[op_ind][t_ind] = op(t_ind, to_user_states[t_ind])
-                    else:
-                        to_user_expect.append(expect(op, to_user_states))
-                is_e_ops = True
-                
-             
-            if is_e_ops:
-                to_user_states = []
-                    
+        is_e_ops = False
+        if isinstance(e_ops, qobj.Qobj):
+            to_user_expect = [expect(e_ops, to_user_states)]
+            is_e_ops = True
+        elif callable(e_ops):
+            to_user_expect = [] 
+            for t_ind in np.arange(len(tlist)): 
+                to_user_expect.append(e_ops(t_ind, to_user_states[t_ind])) 
+
+            is_e_ops = True
+        elif e_ops == None or len(e_ops) == 0:
+            to_user_expect = []
+        else:
+            to_user_expect = []
+            for op_ind in np.arange(len(e_ops)):
+                op = e_ops[op_ind]
+                if not isinstance(op, qobj.Qobj) and callable(op):
+                    to_user_expect.append(np.zeros(len(tlist), dtype = complex))
+                    for t_ind in np.arange(len(tlist)):
+                        to_user_expect[op_ind][t_ind] = op(t_ind, to_user_states[t_ind])
+                else:
+                    to_user_expect.append(expect(op, to_user_states))
+            is_e_ops = True
+
+
+        if is_e_ops:
+            to_user_states = []
+    
             
         to_user = solver.Result()
-        to_user.solver = res.solver
         to_user.times = tlist
         to_user.states = to_user_states
         to_user.expect = to_user_expect
-        to_user.num_expect = res.num_expect
-        to_user.num_collapse = res.num_collapse
-        to_user.ntraj = res.ntraj
-        to_user.col_times = res.col_times
-        to_user.col_which = res.col_which
+        
+        if solver_used:
+            to_user.solver = res.solver
+            to_user.num_expect = res.num_expect
+            to_user.num_collapse = res.num_collapse
+            to_user.ntraj = res.ntraj
+            to_user.col_times = res.col_times
+            to_user.col_which = res.col_which
+        else:
+            to_user.solver = None
+            
+            if is_e_ops:
+                to_user.num_expect = len(e_ops)
+                
+            if c_ops == None or len(c_ops) == 0:
+                to_user.num_collapse = 0
+            else:
+                to_user.num_collapse = len(c_ops)
+            to_user.ntraj = 0
+            to_user.col_times = []
+            to_user.col_which = []
+        
         
         return to_user
 
@@ -412,11 +428,12 @@ class Evolver():
             
             segment_tlist.append(segment_end)
             
+            solver_used = True
             if len(segment_H) == 0:
                 timestamps = len(segment_tlist)
                 states = [state_init]*timestamps
                 #exp = [[expect(op, state_init)]*timestamps for op in e_ops]
-            
+                solver_used = False
             else:
                 if len(segment_H) == 1 and is_Hstat:
                     res = mesolve(segment_H[0], state_init, segment_tlist, c_ops = c_ops, options = opts)
@@ -437,44 +454,59 @@ class Evolver():
 
             to_user_states += states
             
-            is_e_ops = False
-            if isinstance(e_ops, qobj.Qobj):
-                to_user_expect = [expect(e_ops, to_user_states)]
-                is_e_ops = True
-            elif callable(e_ops):
-                to_user_expect = [] 
-                for t_ind in np.arange(len(tlist)): 
-                    to_user_expect.append(e_ops(t_ind, to_user_states[t_ind])) 
-                    
-                is_e_ops = True
-            elif e_ops == None or len(e_ops) == 0:
-                to_user_expect = []
-            else:
-                to_user_expect = []
-                for op_ind in np.arange(len(e_ops)):
-                    op = e_ops[op_ind]
-                    if not isinstance(op, qobj.Qobj) and callable(op):
-                        to_user_expect.append(np.zeros(len(tlist), dtype = complex))
-                        for t_ind in np.arange(len(tlist)):
-                            to_user_expect[op_ind][t_ind] = op(t_ind, to_user_states[t_ind])
-                    else:
-                        to_user_expect.append(expect(op, to_user_states))
-                is_e_ops = True
-                
-             
-            if is_e_ops:
-                to_user_states = []
+        is_e_ops = False
+        if isinstance(e_ops, qobj.Qobj):
+            to_user_expect = [expect(e_ops, to_user_states)]
+            is_e_ops = True
+        elif callable(e_ops):
+            to_user_expect = [] 
+            for t_ind in np.arange(len(tlist)): 
+                to_user_expect.append(e_ops(t_ind, to_user_states[t_ind])) 
+
+            is_e_ops = True
+        elif e_ops == None or len(e_ops) == 0:
+            to_user_expect = []
+        else:
+            to_user_expect = []
+            for op_ind in np.arange(len(e_ops)):
+                op = e_ops[op_ind]
+                if not isinstance(op, qobj.Qobj) and callable(op):
+                    to_user_expect.append(np.zeros(len(tlist), dtype = complex))
+                    for t_ind in np.arange(len(tlist)):
+                        to_user_expect[op_ind][t_ind] = op(t_ind, to_user_states[t_ind])
+                else:
+                    to_user_expect.append(expect(op, to_user_states))
+            is_e_ops = True
+
+
+        if is_e_ops:
+            to_user_states = []
             
         to_user = solver.Result()
-        to_user.solver = res.solver
         to_user.times = tlist
         to_user.states = to_user_states
         to_user.expect = to_user_expect
-        to_user.num_expect = res.num_expect
-        to_user.num_collapse = res.num_collapse
-        to_user.ntraj = res.ntraj
-        to_user.col_times = res.col_times
-        to_user.col_which = res.col_which
+        
+        if solver_used:
+            to_user.solver = res.solver
+            to_user.num_expect = res.num_expect
+            to_user.num_collapse = res.num_collapse
+            to_user.ntraj = res.ntraj
+            to_user.col_times = res.col_times
+            to_user.col_which = res.col_which
+        else:
+            to_user.solver = None
+            
+            if is_e_ops:
+                to_user.num_expect = len(e_ops)
+                
+            if c_ops == None or len(c_ops) == 0:
+                to_user.num_collapse = 0
+            else:
+                to_user.num_collapse = len(c_ops)
+            to_user.ntraj = 0
+            to_user.col_times = []
+            to_user.col_which = []
         
         return to_user
     
