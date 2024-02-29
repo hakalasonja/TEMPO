@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 # -- Project information
 
 project = 'TEMPO'
-copyright = '2023, Sonja Hakala'
+copyright = '2024, Sonja Hakala'
 author = 'Sonja Hakala'
 
 release = '0.1'
