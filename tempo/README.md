@@ -27,8 +27,8 @@ ______________________   _____ __________________
 
 <!-- Badges -->
 <p align="center">
-  <a href="https://github.com/username/tempo/actions/workflows/main.yml">
-    <img src="https://github.com/username/tempo/actions/workflows/main.yml/badge.svg" alt="Build Status">
+  <a href="https://github.com/georgew79/tempo/actions/workflows/test.yml">
+    <img src="https://github.com/georgew79/tempo/actions/workflows/test.yml/badge.svg" alt="Build Status">
   </a>
   <a href="https://github.com/username/tempo/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/username/tempo.svg" alt="License">
