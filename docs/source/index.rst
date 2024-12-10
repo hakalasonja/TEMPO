@@ -5,8 +5,6 @@
 
 TEMPO documentation
 =====================================
-
-.. include:: ../../README.md
    
 .. toctree::
    :maxdepth: 2
