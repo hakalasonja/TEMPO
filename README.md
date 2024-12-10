@@ -68,5 +68,19 @@ ______________________   _____ __________________
 
 ## Installation
 
-## Demos
+Installation can be done quickly and easily with conda. First, ensure you have setup conda, then follow this tutorial.
+
+1. Run the following to ensure all packages can be discovered. 
+
+```
+conda config --append channels conda-forge
+```
+
+2. Then build an environment with conda. Make sure you are in the root folder of this project.
+
+```
+conda create --name YOUR_ENV_NAME python=3.10.15
+conda activate YOUR_ENV_NAME
+pip install -r requirements.txt
+```
 
