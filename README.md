@@ -14,7 +14,7 @@ ______________________   _____ __________________
     in qutip. Further, existing qutip simulations for such tasks suffer from inefficient applications of mesolve 
     with overlapping pulses. TEMPO removes these issues as a one-stop wrapper over top of qutip that streamlines and speeds up the simulation of pulse sequences. 
     <br />
-    <a href="https://github.com/georgew79/tempo/docs/build/html/index.html"><strong>Explore the docs »</strong></a>
+    <a href="https://tempo-documentation.readthedocs.io/en/latest/"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://github.com/username/tempo">View Demo</a>
