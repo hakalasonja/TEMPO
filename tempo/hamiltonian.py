@@ -11,7 +11,12 @@ The Hamiltonian class for representing Hamiltonian operators.
 
 from qutip import qobj
 import os
+import types
 import numpy as np
+
+from tempo.exceptions import *
+
+from collections.abc import Iterable
 
 # quality of life: if someone wants just a single matrix, should they still define a function like lambda x: x????
 # if user doesn't input any function, just do lambda x: x by default
@@ -49,23 +54,36 @@ class Hamiltonian():
     ----------
     ops : dict of :obj:`qutip.Qobj` or :obj:`qutip.Qobj`
         Dictionary of all operators that make up the final Hamiltonian.
-    op_params: dict of float
+    op_params: dict of float / float array, Qobj
         Dictionary of scalars that make up the coefficient of the final Hamiltonian.
     func : function
         Callback function that takes the operators and scalars to combine.  
-    H : :obj:`qutip.Qobj`
-        Time-independent Hamiltonian with a scalar coefficient part and an operator part evaluated via func.
     """
     
-    def __init__(self, ops = {}, op_params = {}, func = None):
+    def __init__(self, ops: dict = {}, op_params: dict = {}, func: types.FunctionType = None):
         """
         Hamiltonian constructor.
+
+        Parameters
+        ----------
+        ops : dict of :obj:`qutip.Qobj` or :obj:`qutip.Qobj`
+            Dictionary of all operators that make up the final Hamiltonian.
+            If the Hamiltonian has no specified numerical coefficient and is only composed of one operator, the operator may be passed directly as a :obj:`qutip.Qobj`. In this case `params` and `func` are not needed as inputs.
+        op_params: dict, optional
+            Dictionary of numerical parameters that make up the coefficient of the final Hamiltonian.
+        func : function, optional
+            Callback function that takes the operators and parameters to combine.
         """
         self.ops = ops
         
         if not isinstance(ops, qobj.Qobj):
             self.op_params = op_params
             self.func = func
+
+        if (func is not None) and (not callable(func)):
+            raise TEMPO_ImproperInputException("Provided coefficient function is not a function")
+        if (op_params is not None) and (type(op_params) != type({})):
+            raise TEMPO_ImproperInputException("Operating parameters are not a dictionary")
     
     @property
     def ops(self):
@@ -84,7 +102,7 @@ class Hamiltonian():
             self._op_params = {}
             self._func = lambda op, params: op
         else: 
-            raise TypeError("Matrices must be in a dictionary")
+            raise TEMPO_ImproperInputException("Matrices must be in a dictionary")
     
     @ops.deleter
     def ops(self):
@@ -103,7 +121,7 @@ class Hamiltonian():
         elif op_params == None:
             self._op_params = {}
         else:
-            raise TypeError("Parameters must be in a dictionary")
+            raise TEMPO_ImproperInputException("Parameters must be in a dictionary")
     
     @op_params.deleter
     def op_params(self):
@@ -119,7 +137,7 @@ class Hamiltonian():
         if callable(func):
             self._func = func
         else:
-            raise TypeError("Must be a function")
+            raise TEMPO_ImproperInputException("Must be a function")
     
     @func.deleter
     def func(self):
@@ -151,6 +169,7 @@ class Hamiltonian():
             raise ValueError("Hamiltonian function has not been specified")
         else:
             H = self._func(self._ops, self._op_params)
+            self._H = H
             return H
     
     @H.setter
@@ -158,7 +177,7 @@ class Hamiltonian():
         if isinstance(H, qobj.Qobj):
             self._H = H
         else:
-            raise TypeError("The full Hamiltonian must be a QuTiP Qobj object.")    
+            raise TEMPO_ImproperInputException("The full Hamiltonian must be a QuTiP Qobj object.")    
     
     @H.deleter
     def H(self):

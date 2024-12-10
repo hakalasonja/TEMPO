@@ -1,15 +1,18 @@
-.. TEMPO documentation master file.
+.. TEMPO documentation master file, created by
+   sphinx-quickstart on Tue Dec 10 12:19:30 2024.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
 
-Welcome to TEMPO's documentation!
-==================================
+TEMPO documentation
+=====================================
 
+.. include:: ../../README.md
+   
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-   
+
    modules
-
-
 
 Indices and tables
 ==================

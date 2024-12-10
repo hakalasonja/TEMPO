@@ -15,7 +15,10 @@ from tempo.hamiltonian import Hamiltonian
 from tempo.pulse import Pulse
 import numpy as np
 
-# look into making input types more general; list --> array_like (consider iterable)
+from typing import Union
+from collections.abc import Iterable
+from tempo.exceptions import *
+
 
 class Pulse_sequence():
     """
@@ -40,12 +43,34 @@ class Pulse_sequence():
         Time-independent Hamiltonian that applies at all times in the simulation.
     """
     
-    def __init__(self, pulses = None, Hstat = None):
-        
+    def __init__(self, pulses: Iterable[Pulse] = None, Hstat: Union[Hamiltonian, qobj.Qobj] = None):
+        """
+        Constructor for storing pulse sequences (lists of pulses).
+
+        Parameters
+        ----------
+        pulses : list of :obj:`pulse.Pulse` 
+            List of :obj:`pulse.Pulse` instances that make up the pulse sequence. Pulses do not have to be ordered in any way.
+        Hstat : :obj:`hamiltonian.Hamiltonian` or :obj:`qutip.Qobj`, optional
+            Time-independent Hamiltonian that applies at all times in the simulation.
+        """
+        if pulses is not None and not isinstance(pulses, Iterable):
+            raise TEMPO_ImproperInputException("Pulses is not an iterable")
+        if pulses is not None:
+            if type(pulses) == type({}):
+                if sum([1 if not isinstance(x, Pulse) else 0 for x in pulses.values()]) != 0:
+                    raise TEMPO_ImproperInputException("Pulses includes a non Pulse object")
+            else:
+                if sum([1 if not isinstance(x, Pulse) else 0 for x in pulses]) != 0:
+                    raise TEMPO_ImproperInputException("Pulses includes a non Pulse object")
+        if Hstat is not None:
+            if not isinstance(Hstat, qobj.Qobj) and not isinstance(Hstat, Hamiltonian):
+                raise TEMPO_ImproperInputException("The provided time-independent Hamiltonian is not a Qobj or Hamiltonian")
+
         self.pulses = pulses
         self.Hstat = Hstat
         
-    def add_pulse(self, pls):
+    def add_pulse(self, pls: Union[Pulse, Iterable[Pulse]]):
         """
         Add a pulse or list of pulses to the sequence.
         
@@ -61,11 +86,11 @@ class Pulse_sequence():
                 if isinstance(p, Pulse):
                     self._pulses.append(p)
                 else:
-                    raise TypeError("All pulses in list must be Pulse instances")
+                    raise TEMPO_ImproperInputException("All pulses in list must be Pulse instances")
         else: 
-            raise TypeError("Pulses must be Pulse instances. Multiple pulses must be in a list") 
+            raise TEMPO_ImproperInputException("Pulses must be Pulse instances. Multiple pulses must be in a list") 
                
-    def remove_pulse(self, pls):
+    def remove_pulse(self, pls: Union[Pulse, Iterable[Pulse]]):
         """
         Remove a pulse or list of pulses from the sequence. If there are multiple copies of the same pulse in the sequence, then only the first instance is removed.
         
@@ -85,7 +110,7 @@ class Pulse_sequence():
         else: 
             raise TypeError("Pulses must be Pulse instances. Multiple pulses must be in a list") 
         
-    def timing_info(self):
+    def timing_info(self) -> dict:
         """
         Get a dictionary with the start time, duration, and end time of the entire pulse sequence. Start time is the start time of the earliest pulse in the sequence, and end time is accordingly the end time of the last-ending pulse in the sequence. Note that the simulation itself may span a longer time duration than this if the times at which the state of the system is evaluated extend outside of the pulse sequence time range; for example, there may be a duration of time at the beginning or end of the simulation where only the static Hamiltonian applies. 
         """
@@ -117,7 +142,8 @@ class Pulse_sequence():
         elif pulses == None:
             self._pulses = []
         else: 
-            raise TypeError("Pulses must be in a list")
+            raise TEMPO_ImproperInputException("Pulses must be in a list")
+            # Checking for individual pulses will not be repeated. It's done when the pulses are added...
     
     @pulses.deleter
     def pulses(self):
@@ -129,7 +155,6 @@ class Pulse_sequence():
     
     @Hstat.setter        
     def Hstat(self, Hstat):
-        
         if Hstat == None:
             self._Hstat = Hstat
         elif isinstance(Hstat, Hamiltonian):
@@ -137,8 +162,7 @@ class Pulse_sequence():
         elif isinstance(Hstat, qobj.Qobj):
             self._Hstat = Hstat
         else: 
-            print(type(Hstat))
-            raise TypeError("Operator must be a Hamiltonian instance or a QuTiP Qobj instance")
+            raise TEMPO_ImproperInputException("Operator must be a Hamiltonian instance or a QuTiP Qobj instance")
     
     @Hstat.deleter
     def Hstat(self):

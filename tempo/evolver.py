@@ -13,8 +13,16 @@ from qutip import mesolve, solver, qobj, expect
 import os
 from tempo.hamiltonian import Hamiltonian
 from tempo.pulse_sequence import Pulse_sequence
+from tempo.pulse import Pulse
+from tempo.exceptions import *
 import numpy as np
+import types
+import qutip
 from math import isclose
+
+from collections.abc import Iterable
+from typing import Union
+
 
 class Evolver():
     """
@@ -43,12 +51,10 @@ class Evolver():
     ----------
     state_init : :obj:`qutip.Qobj`
         Initial state vector or density matrix.
-    pulse_seq : :obj:`pulse_sequence.Pulse_sequence`
-        Sequence of pulses to be applied to initial state.
     tlist : list of float
         List of times at which to evaluate the system's state or the expectation value of the operator(s) in `e_ops`. 
-    Hstat : :obj:`qutip.Qobj`
-        Time-independent Hamiltonian that applies at all times in the simulation.
+    pulse_seq : :obj:`pulse_sequence.Pulse_sequence`
+        Sequence of pulses to be applied to initial state.
     c_ops : list of :obj:`qutip.Qobj`
         List of collapse operators.
     e_ops : list of :obj:`qutip.Qobj` or callback functions
@@ -57,26 +63,87 @@ class Evolver():
         Options for `mesolve`.
     """
     
-    def __init__(self, state_init = None, tlist = None, pulse_seq = None, c_ops=None, e_ops=None, opts = None):
+    def __init__(self, state_init: qobj.Qobj = None, tlist: Iterable[float] = None, pulse_seq: Pulse_sequence = None, c_ops: Iterable[qobj.Qobj] = None, e_ops: Union[Iterable[qobj.Qobj], Iterable[types.FunctionType]] = None, opts: qutip.Options = None):
+        """
+        Evolver constructor.
         
+        Parameters 
+        ----------
+        state_init : :obj:`qutip.Qobj`
+            Initial state vector or density matrix.
+        pulse_seq : :obj:`pulse_sequence.Pulse_sequence`
+            Sequence of pulses to be applied to initial state.
+        tlist : list of float
+            List of times at which to evaluate the system's state or the expectation value of the operator(s) in `e_ops`. 
+        Hstat : :obj:`hamiltonian.Hamiltonian` or :obj:`qutip.Qobj`, optional
+            Time-independent Hamiltonian that applies at all times in the simulation.
+        c_ops : list of :obj:`qutip.Qobj`
+            List of collapse operators.
+        e_ops : list of :obj:`qutip.Qobj` or callback functions
+            List of operators for which to evaluate expectation values.
+        opts : :obj:`qutip.Options`
+            Options for `qutip.mesolve`.
+        """
+        
+        if state_init is not None and not isinstance(state_init, qobj.Qobj):
+            raise TEMPO_ImproperInputException("Initial state is not a Qobj")
+        if tlist is not None and not isinstance(tlist, Iterable):
+            raise TEMPO_ImproperInputException("Time list is not an iterable")
+        if tlist is not None and type(tlist) == type({}):
+            if sum([1 if not castable(x, float) else 0 for x in tlist.values()]) != 0:
+                raise TEMPO_ImproperInputException("time list includes a non-float value")
+        elif tlist is not None:
+            if sum([1 if not castable(x, float) else 0 for x in tlist]) != 0:
+                raise TEMPO_ImproperInputException("time list includes a non-float value")
+        if pulse_seq is not None and not isinstance(pulse_seq, Pulse_sequence):
+            raise TEMPO_ImproperInputException("Pulse sequence is not a Pulse Sequence object")
+        if c_ops is not None and not isinstance(c_ops, Iterable):
+            raise TEMPO_ImproperInputException("c_ops is not an iterable")
+        if c_ops is not None and type(c_ops) == type({}):
+            if sum([1 if not isinstance(x, qobj.Qobj) else 0 for x in c_ops.values()]) != 0:
+                raise TEMPO_ImproperInputException("c_ops includes a non Qobj")
+        elif c_ops is not None:
+            if sum([1 if not isinstance(x, qobj.Qobj) else 0 for x in c_ops]) != 0:
+                raise TEMPO_ImproperInputException("c_ops includes a non Qobj")
+        if e_ops is not None and not isinstance(e_ops, Iterable): # TODO: 3 options, Qobj, list of Qobjs
+            raise TEMPO_ImproperInputException("e_ops is not an iterable")
+        if e_ops is not None and sum([1 if (not callable(c) or not isinstance(c, qobj.Qobj)) else 0 for c in e_ops]) != 0:
+            raise TEMPO_ImproperInputException("e_ops is not None, list of Qobjs, callables, etc.")
+        if opts is not None and type(opts) != type(qutip.Options()):
+            raise TEMPO_ImproperInputException("opts is not an Options object")
+
         self._state_init = state_init
         self._tlist = tlist
         self.pulse_seq = pulse_seq
-        self.Hstat = self._pulse_seq.Hstat
+        
+        try:
+            self.Hstat = self._pulse_seq.Hstat
+        except AttributeError:
+            self.Hstat = None
+
         self._c_ops = c_ops if c_ops is not None else []
         self._e_ops = e_ops if e_ops is not None else []
         self._opts = opts
         
-    def generate_H(self, pulse_seq):
+    def generate_H(self, pulse_seq: Pulse_sequence): 
         """
         Put Hamiltonian terms (static Hamiltonian and pulses) in a list together. The static Hamiltonian is first. Time-dependent (pulse) terms are [operator, callback function] pairs. The resulting list is in the correct format to be passed directly into mesolve as `H`.
+        Return types are equivalent to mesolve.
         
+        Parameters
+        ----------
+        pulse_seq : :obj:`pulse_sequence.Pulse_sequence`
+            Sequence of pulses to be applied to the state.
+
         Returns
         -------
         H : list of :obj:`qutip.Qobj` or list of [:obj:`qutip.Qobj`, function]
             List of :obj:`qutip.Qobj` instances and [:obj:`qutip.Qobj`, callback function] pairs.
             List of Hamiltonian terms and their coefficients at each point in time.
         """
+        if not isinstance(pulse_seq, Pulse_sequence):
+            raise TEMPO_ImproperInputException("Pulse sequence is not a Pulse Sequence object")
+
         H = []
         is_Hstat = False
         
@@ -92,7 +159,28 @@ class Evolver():
         
         return H
     
-    def serial_generate_H(self, pulselist, safe = False):
+    def serial_generate_H(self, pulselist: Iterable[Pulse], safe: bool = False):
+        """
+        Generate H (Hamiltonian) for use given a pulselist. 
+
+        Parameters
+        ----------
+        pulselist : Iterable of type Pulse 
+            List with which to build the Hamiltonian.
+        safe : Boolean 
+            Whether or not we should use the serial_eval_coeff for the pulses (unsafe) or the eval_coeff (safe).
+        
+        Returns
+        -------
+            H : List
+                List with the Hamiltonians of each pulse and the coefficient [[H, coeff], ...]
+        """
+        if not isinstance(pulselist, Iterable):
+            raise TEMPO_ImproperInputException("Pulse list is not an iterable object")
+        if sum([1 if not isinstance(x, Pulse) else 0 for x in pulselist]) != 0:
+            raise TEMPO_ImproperInputException("Pulse list includes a non Pulse object")
+        if not isinstance(safe, bool):
+            raise TEMPO_ImproperInputException("safe is not a bool")
         H = []
 
         if safe:
@@ -104,7 +192,7 @@ class Evolver():
 
         return H
     
-    def evolve(self, state_init = None, tlist = None, pulse_seq = None, c_ops = None, e_ops = None, opts = None, method = 'serial', t_rtol = 1e-8):
+    def evolve(self, state_init: qobj.Qobj = None, tlist: Iterable[float] = None, pulse_seq: Pulse_sequence = None, c_ops: Iterable[qobj.Qobj] = None, e_ops: Iterable[qobj.Qobj] = None, opts: qutip.Options = None, method: str = 'serial', t_rtol: float = 1e-8) -> solver.Result:
         """
         Evolve `state_init` using given pulse sequence. Collapse operators `c_ops` may be passed. Return a `qutip.Result` object which stores output for each timestamp given in `tlist`. If `e_ops` is left as None, `qutip.Result` contains the state vector of the system at each timestamp in its `states` attribute. Otherwise, the expectation values of the operator(s) listed in `e_ops` are stored in `qutip.Result.expect` in a 2-dimensional list. 
         
@@ -134,19 +222,51 @@ class Evolver():
         result : `qutip.Result`
             System state or expectation value at `tlist` timestamps.
         """
+        if state_init is not None and not isinstance(state_init, qobj.Qobj):
+            raise TEMPO_ImproperInputException("Initial state is not a Qobj")
+        if tlist is not None and not isinstance(tlist, Iterable):
+            raise TEMPO_ImproperInputException("Time list is not an iterable")
+        if tlist is not None and type(tlist) == type({}):
+            if sum([1 if not castable(x, float) else 0 for x in tlist.values()]) != 0:
+                raise TEMPO_ImproperInputException("time list includes a non-float value")
+        elif tlist is not None:
+            if sum([1 if not castable(x, float) else 0 for x in tlist]) != 0:
+                raise TEMPO_ImproperInputException("time list includes a non-float value")
+        if pulse_seq is not None and not isinstance(pulse_seq, Pulse_sequence):
+            raise TEMPO_ImproperInputException("Pulse sequence is not a Pulse Sequence object")
+        if c_ops is not None and not isinstance(c_ops, Iterable):
+            raise TEMPO_ImproperInputException("c_ops is not an iterable")
+        if c_ops is not None and type(c_ops) == type({}):
+            if sum([1 if not isinstance(x, qobj.Qobj) else 0 for x in c_ops.values()]) != 0:
+                raise TEMPO_ImproperInputException("c_ops includes a non Qobj")
+        elif c_ops is not None:
+            if sum([1 if not isinstance(x, qobj.Qobj) else 0 for x in c_ops]) != 0:
+                raise TEMPO_ImproperInputException("c_ops includes a non Qobj")
+        if e_ops is not None and not isinstance(e_ops, Iterable): # TODO: 3 options, Qobj, list of Qobjs
+            raise TEMPO_ImproperInputException("e_ops is not an iterable")
+        if e_ops is not None and sum([1 if (not callable(c) or not isinstance(c, qobj.Qobj)) else 0 for c in e_ops]) != 0:
+            raise TEMPO_ImproperInputException("e_ops is not None, list of Qobjs, callables, etc.")
+        if opts is not None and type(opts) != type(qutip.Options()):
+            raise TEMPO_ImproperInputException("opts is not an Options object")
+
+        if method != "regular" and method != "serial" and method != "serial_safe":
+            raise TEMPO_ImproperInputException("Method not in allowed form")
+        if not castable(t_rtol, float):
+            raise TEMPO_ImproperInputException("Tolerance not castable to float")
+
         if state_init == None:
             if self._state_init == None:
-                raise AttributeError("Initial state has not been defined")
+                raise TEMPO_ImproperInputException("Initial state has not been defined")
             else:
                 state_init = self._state_init
         if tlist is None:
             if self._tlist is None:
-                raise AttributeError("tlist has not been defined")
+                raise TEMPO_ImproperInputException("tlist has not been defined")
             else:
                 tlist = self._tlist
         if pulse_seq == None:
             if self._pulse_seq == None:
-                raise AttributeError('Pulse sequence has not been defined')
+                raise TEMPO_ImproperInputException('Pulse sequence has not been defined')
             else:
                 pulse_seq = self._pulse_seq
         if c_ops == None:
@@ -164,15 +284,41 @@ class Evolver():
         elif method == 'serial_safe':
             result = self.serial_safe_evolve(pulse_seq, state_init, tlist, c_ops, e_ops, opts, t_rtol)
         else: 
-            raise ValueError('Solving method must be one of the following: \'regular\', \'serial\', or \'serial_safe\' ')
+            raise TEMPO_ImproperInputException('Solving method must be one of the following: \'regular\', \'serial\', or \'serial_safe\' ')
             
         return result
             
-    def serial_evolve(self, pulse_seq, state_init, tlist, c_ops, e_ops, opts, t_rtol):
+    def serial_evolve(self, pulse_seq: Pulse_sequence, state_init: qobj.Qobj, tlist: Iterable[float], c_ops: Iterable[qobj.Qobj], e_ops: Iterable[qobj.Qobj], opts: qutip.Options, t_rtol: float): #TODO: Type hint        
+        if state_init is not None and not isinstance(state_init, qobj.Qobj):
+            raise TEMPO_ImproperInputException("Initial state is not a Qobj")
+        if tlist is not None and not isinstance(tlist, Iterable):
+            raise TEMPO_ImproperInputException("Time list is not an iterable")
+        if tlist is not None and type(tlist) == type({}):
+            if sum([1 if not castable(x, float) else 0 for x in tlist.values()]) != 0:
+                raise TEMPO_ImproperInputException("time list includes a non-float value")
+        elif tlist is not None:
+            if sum([1 if not castable(x, float) else 0 for x in tlist]) != 0:
+                raise TEMPO_ImproperInputException("time list includes a non-float value")
+        if pulse_seq is not None and not isinstance(pulse_seq, Pulse_sequence):
+            raise TEMPO_ImproperInputException("Pulse sequence is not a Pulse Sequence object")
+        if c_ops is not None and not isinstance(c_ops, Iterable):
+            raise TEMPO_ImproperInputException("c_ops is not an iterable")
+        if c_ops is not None and type(c_ops) == type({}):
+            if sum([1 if not isinstance(x, qobj.Qobj) else 0 for x in c_ops.values()]) != 0:
+                raise TEMPO_ImproperInputException("c_ops includes a non Qobj")
+        elif c_ops is not None:
+            if sum([1 if not isinstance(x, qobj.Qobj) else 0 for x in c_ops]) != 0:
+                raise TEMPO_ImproperInputException("c_ops includes a non Qobj")
+        if e_ops is not None and not isinstance(e_ops, Iterable): # TODO: 3 options, Qobj, list of Qobjs
+            raise TEMPO_ImproperInputException("e_ops is not an iterable")
+        if e_ops is not None and sum([1 if (not callable(c) or not isinstance(c, qobj.Qobj)) else 0 for c in e_ops]) != 0:
+            raise TEMPO_ImproperInputException("e_ops is not None, list of Qobjs, callables, etc.")
+        if opts is not None and type(opts) != type(qutip.Options()):
+            raise TEMPO_ImproperInputException("opts is not an Options object")
 
         for i in np.arange(len(tlist)-1):
             if isclose(tlist[i], tlist[i+1], rel_tol=t_rtol):
-                raise ValueError("tlist values too close together; try decreasing t_rtol or changing tlist")
+                raise TEMPO_ImproperInputException("tlist values too close together; try decreasing t_rtol or changing tlist")
         
         ps_init = pulse_seq
     
@@ -331,11 +477,31 @@ class Evolver():
         
         return to_user
 
-    def serial_safe_evolve(self, pulse_seq, state_init, tlist, c_ops = None, e_ops = None, opts = None, t_rtol = 1e-8):
-        
-        for i in np.arange(len(tlist)-1):
-            if isclose(tlist[i], tlist[i+1], rel_tol=t_rtol):
-                raise ValueError("tlist values too close together; try decreasing t_rtol or changing tlist")
+    def serial_safe_evolve(self, pulse_seq: Pulse_sequence, state_init: qobj.Qobj, tlist: Iterable[float], c_ops: Iterable[qobj.Qobj] = None, e_ops: Iterable[qobj.Qobj] = None, opts: Union[Iterable[qobj.Qobj], Iterable[types.FunctionType]] = None, t_rtol: float = 1e-8):
+        if state_init is not None and not isinstance(state_init, qobj.Qobj):
+            raise TEMPO_ImproperInputException("Initial state is not a Qobj")
+        if tlist is not None and not isinstance(tlist, Iterable):
+            raise TEMPO_ImproperInputException("Time list is not an iterable")
+        if tlist is not None and type(tlist) == type({}):
+            if sum([1 if not castable(x, float) else 0 for x in tlist.values()]) != 0:
+                raise TEMPO_ImproperInputException("time list includes a non-float value")
+        elif tlist is not None:
+            if sum([1 if not castable(x, float) else 0 for x in tlist]) != 0:
+                raise TEMPO_ImproperInputException("time list includes a non-float value")
+        if pulse_seq is not None and not isinstance(pulse_seq, Pulse_sequence):
+            raise TEMPO_ImproperInputException("Pulse sequence is not a Pulse Sequence object")
+        if c_ops is not None and not isinstance(c_ops, Iterable):
+            raise TEMPO_ImproperInputException("c_ops is not an iterable")
+        if c_ops is not None and type(c_ops) == type({}):
+            if sum([1 if not isinstance(x, qobj.Qobj) else 0 for x in c_ops.values()]) != 0:
+                raise TEMPO_ImproperInputException("c_ops includes a non Qobj")
+        elif c_ops is not None:
+            if sum([1 if not isinstance(x, qobj.Qobj) else 0 for x in c_ops]) != 0:
+                raise TEMPO_ImproperInputException("c_ops includes a non Qobj")
+        if e_ops is not None and not isinstance(e_ops, Iterable): # TODO: 3 options, Qobj, list of Qobjs
+            raise TEMPO_ImproperInputException("e_ops is not an iterable")
+        if opts is not None and type(opts) != type(qutip.Options()):
+            raise TEMPO_ImproperInputException("opts is not an Options object")
         
         ps_init = pulse_seq
     
@@ -544,10 +710,10 @@ class Evolver():
     
     @pulse_seq.setter
     def pulse_seq(self, pulse_seq):
-        if isinstance(pulse_seq, Pulse_sequence):
+        if isinstance(pulse_seq, Pulse_sequence) or pulse_seq is None:
             self._pulse_seq = pulse_seq
         else:
-            raise TypeError('Pulse sequence must be a Pulse_sequence instance')
+            raise TEMPO_ImproperInputException('Pulse sequence must be a Pulse_sequence instance')
         
     @pulse_seq.deleter
     def pulse_seq(self):
@@ -566,8 +732,7 @@ class Evolver():
         elif Hstat == None:
             self._Hstat = None
         else: 
-            print(type(Hstat))
-            raise TypeError("Static Hamiltonian operator must be a Hamiltonian instance or a QuTiP Qobj instance")
+            raise TEMPO_ImproperInputException("Static Hamiltonian operator must be a Hamiltonian instance or a QuTiP Qobj instance")
     
     @Hstat.deleter
     def Hstat(self):

@@ -11,8 +11,12 @@ Create time-dependent pulses.
 
 import os
 import numpy as np
+import qutip
 from tempo.pulse_recipe import Pulse_recipe
 from tempo.hamiltonian import Hamiltonian
+from tempo.exceptions import *
+
+from collections.abc import Iterable
 
 class Pulse():
     """
@@ -41,23 +45,37 @@ class Pulse():
         Start time of pulse.
     duration : float
         Duration of pulse. 
-    end_time : float
-        End time of pulse.
     coeff_params : dict of float
         Dictionary of parameters to be passed in the time-dependent coefficient function `pulse_recipe.coeff_func`.
-    ham : :obj:`hamiltonian.Hamiltonian`
-        The operator part of the time-dependent term.
     """
     
-    def __init__(self, recipe, start_time = 0, duration = 0, coeff_params = None):
+    def __init__(self, recipe: Pulse_recipe, start_time: float = 0, duration: float = 0, coeff_params: dict = None):
         """
         Pulse constructor.
         """
         # check if self.pulsefunc == None then set it to lambda t, args: 1 
         
+        if recipe is None:
+            raise TEMPO_NullValueException("Recipe for pulse is null")
+        if not isinstance(recipe, Pulse_recipe):
+            raise TEMPO_ImproperInputException("Recipe is not a pulse_recipe.Pulse_recipe")
+        if not castable(start_time, float):
+            try: 
+                start_time = float(start_time)
+            except Exception:
+                raise TEMPO_ImproperInputException("Start time is not a float")
+        if not castable(start_time, float):
+            try: 
+                duration = float(duration)
+            except Exception:
+                raise TEMPO_ImproperInputException("Duration time is not a float")     
+        if coeff_params is not None and type(coeff_params) != type({}):
+            raise TEMPO_ImproperInputException("Coefficient parameters are not a dictionary")        
+
         self.recipe = recipe
         self._start_time = start_time
         self.duration = duration
+        self._end_time = start_time + duration # --> Ensure that end time is set before possibly being called.
         self._coeff_params = {}
         
         if coeff_params == None:
@@ -69,7 +87,7 @@ class Pulse():
         self.ham = recipe.ham
 
         
-    def update_params(self, keys, values):
+    def update_params(self, keys: Iterable[str], values: Iterable[float]):
         """
         Add key-value pairs to `coeff_params`. `keys` and `values` should be the same length. Elements are paired by index. 
         
@@ -80,13 +98,32 @@ class Pulse():
         values : list of float
             List of parameter values.
         """
+        if not isinstance(keys, Iterable):
+            raise TEMPO_ImproperInputException("Keys are not an iterable")
+        if not isinstance(values, Iterable):
+            raise TEMPO_ImproperInputException("Values are not an iterable")
+        if type(keys) == type({}):
+            if sum([1 if not isinstance(x, str) else 0 for x in keys.values()]) != 0:
+                raise TEMPO_ImproperInputException("Keys include a non string")
+        else:
+            if sum([1 if not isinstance(x, str) else 0 for x in keys]) != 0:
+                raise TEMPO_ImproperInputException("Keys include a non string")
+        if type(values) == type({}):
+            if sum([1 if not castable(x, float) else 0 for x in values.values()]) != 0:
+                raise TEMPO_ImproperInputException("Values include a non float")  
+        else:
+            if sum([1 if not isinstance(x, float) else 0 for x in values]) != 0:
+                raise TEMPO_ImproperInputException("Values include a non float")  
+
+
         for i in range(len(keys)):
             self._coeff_params.update({keys[i]: values[i]})
         
-    def eval_coeff(self, t, args = {}):
+    def eval_coeff(self, t: float, args: dict = {}) -> float:
         """
         Evaluate coefficient of pulse at time `t`. If `args` is not given, then `coeff_params` is used as parameter input for coefficient function. If the pulse is off at time t, the coefficient is 0.
-        
+        Warning that using args will mean coeff_params is entirely ignored this execution.
+
         Parameters
         ----------
         t : float
@@ -101,7 +138,14 @@ class Pulse():
         """
         # params must be a dictionary
         # tlist can be a list or a scalar (only scalar right now)
-
+        if not castable(t, float):
+            try:
+                t = float(t)
+            except Exception:
+                raise TEMPO_ImproperInputException("Time cannot be cast to float")
+        if type(args) != type({}):
+            raise TEMPO_ImproperInputException("Args were not provided in dictionary form")
+            
         if len(args) == 0:
             coeff_params = self._coeff_params
         else:
@@ -115,7 +159,7 @@ class Pulse():
         
         return pulsecoeff
     
-    def serial_eval_coeff(self, t, args = {}):
+    def serial_eval_coeff(self, t: float, args: dict = {}) -> float:
         """
         Evaluate coefficient of pulse at time `t`. Differs from `eval_coeff` in that the start- and endtimes of the pulse are not taken into account; the coefficient will be evaluated whether the pulse is on or off. This method is called by the method `evolver.serial_evolve` in the :obj:`evolver.Evolver` class. 
         
@@ -131,6 +175,9 @@ class Pulse():
         coeff : float
             Pulse coefficient at time `t`.
         """ 
+        if len(args) > 0:
+            print_warning("Warning: Args is non-empty but these will NOT be used for serial evaluation.")
+
         f = self._recipe.coeff_func
         pulsecoeff = f(t, self._coeff_params)
         return pulsecoeff
@@ -144,7 +191,7 @@ class Pulse():
         if isinstance(recipe, Pulse_recipe):
             self._recipe = recipe
         else:
-            raise TypeError('pulserecipe must be a member of the Pulserecipe class')
+            raise TEMPO_ImproperInputException('pulserecipe must be a member of the Pulserecipe class')
 
     @recipe.deleter
     def recipe(self):
@@ -156,6 +203,12 @@ class Pulse():
     
     @start_time.setter
     def start_time(self, start_time):
+        if not castable(start_time, float):
+            try:
+                start_time = float(start_time)
+            except Exception:
+                raise TEMPO_ImproperInputException("Time could not be cast to float")
+
         self._start_time = start_time
         
     @start_time.deleter
@@ -169,6 +222,13 @@ class Pulse():
     @duration.setter
     def duration(self, duration):
         self._duration = duration
+
+        if not castable(duration, float):
+            try:
+                duration = float(duration)
+            except Exception:
+                raise TEMPO_ImproperInputException("Duration could not be cast to float")
+
         self._end_time = self._start_time+duration
         
     @duration.deleter
@@ -183,7 +243,10 @@ class Pulse():
     def end_time(self, end_time):
         
         if end_time < self._start_time:
-            raise ValueError("Start time must be before end time")
+            raise TEMPO_ImproperInputException("Start time must be before end time")
+        elif end_time < self._start_time + self._duration:
+            # Note, the above if statement ensures that end time is already definitely greater than start time. 
+            print_warning("Warning: End time is set before the duration would dictate. May cause undefined behavior.")
         else:
             self._end_time = end_time
             self._duration = end_time-self._start_time
@@ -208,7 +271,7 @@ class Pulse():
             self.update_params(list(coeff_params.keys()), list(coeff_params.values()))
             
         else: 
-            raise TypeError("Pulse coefficient parameters must be in a dictionary")
+            raise TEMPO_ImproperInputException("Pulse coefficient parameters must be in a dictionary")
     
     @coeff_params.deleter
     def coeff_params(self):
@@ -224,7 +287,7 @@ class Pulse():
         if isinstance(ham, Hamiltonian):        
             self._ham = ham
         else:
-            raise TypeError("Pulse Hamiltonian must be a Hamiltonian instance")
+            raise TEMPO_ImproperInputException("Pulse Hamiltonian must be a Hamiltonian instance")
             
     @ham.deleter
     def ham(self):

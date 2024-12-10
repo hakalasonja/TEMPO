@@ -12,7 +12,11 @@ The Pulse_recipe class to create time-dependent pulse models.
 from qutip import qobj
 import os
 from tempo.hamiltonian import Hamiltonian
+from tempo.exceptions import *
+import types
 import numpy as np
+
+from collections.abc import Iterable
 
 class Pulse_recipe():
     """
@@ -48,15 +52,32 @@ class Pulse_recipe():
         Callback function that calculates the time-dependent coefficient using a time `t` and a dictionary of `args`.
     """
     
-    def __init__(self, ham = None, param_keys = None, coeff_func = None):
+    def __init__(self, ham: Hamiltonian = None, param_keys: Iterable[str] = None, coeff_func: types.FunctionType = None):
         """
         Pulse_recipe constructor.
+        
+        Parameters 
+        ----------
+        ham : :obj:`hamiltonian.Hamiltonian`
+            Hamiltonian instance that describes the operator part of the pulse.
+        param_keys: list of str
+            List of names of parameters used in `coeff_func`. Names should be strings.
+        coeff_func : function
+            Callback function that calculates the time-dependent coefficient using a time `t` and a dictionary of `args`.
+            
         """
+        if ham is not None and not isinstance(ham, Hamiltonian):
+            raise TEMPO_ImproperInputException("Hamiltonian is not a hamiltonian object")
+        if param_keys is not None and not isinstance(param_keys, Iterable):
+            raise TEMPO_ImproperInputException("Param keys are not an iterable")
+        if coeff_func is not None and not callable(coeff_func):
+            raise TEMPO_ImproperInputException("Coefficient function is not callable")
+
         self.ham = ham # Hamiltonian or Qobj
         self.param_keys = param_keys # list of strings (key names for dictionary of parameters)
         self.coeff_func = coeff_func # function
             
-    def eval_coeff(self, t, params):
+    def eval_coeff(self, t: float, params: dict):
         """
         Pulse coefficient at time `t`. 
         
@@ -76,6 +97,10 @@ class Pulse_recipe():
         # ! check that input type = output type (array, float, etc)
         # t can be tuple, numpy array, list, float... but ppl need to make sure that their own function returns the right type 
         coeff = self._coeff_func(t, params)
+
+        if type(coeff) != type(t):
+            raise TEMPO_ImproperInputException("The type of t must match the return type of the provided coefficient function")
+
         return coeff
      
     @property
@@ -91,7 +116,7 @@ class Pulse_recipe():
             self._ham = ham
         else: 
             print(type(ham))
-            raise TypeError("ham must be a Hamiltonian instance")
+            raise TEMPO_ImproperInputException("ham must be a Hamiltonian instance")
     
     @ham.deleter
     def ham(self):
@@ -104,12 +129,12 @@ class Pulse_recipe():
     @param_keys.setter
     def param_keys(self, param_keys):
         
-        if isinstance(param_keys, list):
+        if isinstance(param_keys, Iterable):
             self._param_keys = param_keys
         elif param_keys == None:
             self._param_keys = []
         else:
-            raise TypeError("Keys must be in a list of strings")
+            raise TEMPO_ImproperInputException("Keys must be in a iterable of strings")
     
     @param_keys.deleter     
     def param_keys(self):
@@ -125,7 +150,7 @@ class Pulse_recipe():
         if callable(coeff_func):
             self._coeff_func = coeff_func
         else:
-            raise TypeError("Must be a function")
+            raise TEMPO_ImproperInputException("Must be a function")
         
     @coeff_func.deleter    
     def coeff_func(self):
