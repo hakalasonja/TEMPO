@@ -6,8 +6,8 @@ build:
     python: "3.9"
 
 python:
+  version: 3.10.15
   install:
-    - requirements: docs/requirements.txt
-
+    - requirements: requirements.txt
 sphinx:
   configuration: docs/source/conf.py
