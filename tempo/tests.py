@@ -5,19 +5,18 @@ This file includes all test cases for the TEMPO library to be run with pytest.
 
 @author:
 """
-import pytest
 import numpy as np
-import types
-from collections.abc import Iterable
+import pytest
+from qutip import Qobj, sigmax, sigmay, sigmaz, basis, Options, expect
+import math
 
-from qutip import Qobj, sigmax, sigmay, sigmaz, basis, Options
-
-from tempo.exceptions import TEMPO_ImproperInputException, TEMPO_NullValueException
 from tempo.hamiltonian import Hamiltonian
 from tempo.pulse_recipe import Pulse_recipe
 from tempo.pulse import Pulse
 from tempo.pulse_sequence import Pulse_sequence
 from tempo.evolver import Evolver
+from tempo.exceptions import *
+
 
 
 '''
@@ -624,606 +623,110 @@ class TestEvolver:
 ##### ###### ##### ###### ##### ###### ##### ###### ##### ###### ##### ###### ##### ######
 ##### ###### ##### ###### ##### ###### ##### ###### ##### ###### ##### ###### ##### ######
 '''
-from qutip import *
-import numpy as np
-import scipy as scipy
-import scipy.signal as scs
-from multiprocess import Pool
-import time
-from scipy.optimize import curve_fit
-
-import sys
-import os
-
-from tempo.hamiltonian import Hamiltonian
-from tempo.pulse_recipe import Pulse_recipe
-from tempo.evolver import Evolver
-from tempo.pulse_sequence import Pulse_sequence
-from tempo.pulse import Pulse
-from tempo.hamfuncs import *
-
-import math
-from qutip import identity, jmat, tensor, basis, qobj
-import os
-import numpy as np
-
-from tempo.exceptions import *
-from collections.abc import Iterable
 
 class TestFullSystem:
-    class Qsys:
-        """
-        A class for representing a system of one or more spins and their spin operators.
-        
-        The object is constructed by passing a tuple of the dimensions of each spin's Hilbert space. For example, for a coupled system of a spin-1 and spin-1/2, use ``dimensions = (3,2)``.
-        
-        Also includes methods for obtaining the spin operators Sx, Sy, and Sz, as well as a list of the basis vectors for each spin.
-        
-        Parameters
-        ----------
-        dimensions : tuple
-            A tuple of the dimensions of each spin's Hilbert space.
-            The length of the tuple is the number of spins in the system.
-            
-        Attributes
-        ----------
-        dimensions: tuple of int
-            A tuple of the dimensions of each spin's Hilbert space.
-            The length of the tuple is the number of spins in the system.
-        numparticles : int
-            Number of spins in the system.
-        stot : list of float
-            A list of the spin quantum numbers of each spin. 
-        Sx : list of `qutip.Qobj`
-            A list of the Sx spin operators of each spin.
-        Sy : list of `qutip.Qobj`
-            A list of the Sy spin operators of each spin.
-        Sz : list of `qutip.Qobj`
-            A list of the Sz spin operators of each spin.
-        """
-        
-        def __init__(self, dimensions: tuple):
-            """
-            Qsys constructor.
 
-            Parameters
-            ----------
-            dimensions: tuple of int
-                A tuple of the dimensions of each spin's Hilbert space.
-                The length of the tuple is the number of spins in the system.
-            """
-            self._dimensions = dimensions
+    def test_JJ(self):
+        
+        # 2-level system initial state
+        state_init = basis(2,1) 
 
-            # Input check
-            if not isinstance(self.dimensions, tuple) or len(dimensions) == 0:
-                raise TEMPO_ImproperInputException("Dimensions is not a tuple, or is empty")
-
-            for c_idx, obj in enumerate(self.dimensions):
-                if not isinstance(obj, int):
-                    raise TEMPO_ImproperInputException(f"Dimensions includes a non-int object at index {c_idx}")
-                if obj <= 0:
-                    raise TEMPO_ImproperInputException("Invalid Dimension")
-                
-
-            self._numparticles = len(self._dimensions)
-            
-            self._stot = [(self._dimensions[i]-1)/2 for i in np.arange(self._numparticles)]
-            
-            self._Sx = self.oprs('x')
-            self._Sy = self.oprs('y')
-            self._Sz = self.oprs('z')
-            
-        def oprs(self, axis: str) -> Iterable[qobj.Qobj]:
-            """
-            Spin operators of each spin along `axis`.
-            
-            Parameters
-            ----------
-            axis : str {'x', 'y', 'z'}
-                Axis along which to create spin operators; `'x'`, `'y'`, or `'z'`.
-                
-            Returns
-            ----------
-            oprs : list of `qutip.Qobj`
-                List of (`qutip.Qobj`) spin operators along `axis` in the same order as spins in the `dimensions` tuple. 
-            """
-            if axis != "x" and axis != "y" and axis != "z":
-                raise TEMPO_ImproperInputException("Axis for operator creation is not x,y,z")
-
-            oprs = []
-            idlist = [identity(self._dimensions[i]) for i in np.arange(self._numparticles)]
-            
-            for i in np.arange(self._numparticles):
-                idlist[i] = jmat(self._stot[i], axis)
-                oprs.append(tensor(idlist))
-                idlist[i] = identity(self._dimensions[i])
-            
-            #oprs.append(oprs[0]+oprs[1])
-            
-            return oprs
-        
-        def basisstates(self, particlenum: int) -> Iterable[qobj.Qobj]:
-            """
-            Basis state vectors of spin at index `particlenum` in the `dimensions` tuple. 
-            
-            Parameters
-            ----------
-            particlenum : int
-                Index of spin for which to generate basis vectors.
-            
-            Returns
-            ----------
-            basisstates : list of `qutip.Qobj`
-                List of (`qutip.Qobj`) basis state vectors. 
-                Length of list is the dimension of the spin's Hilbert space.
-            """
-            if not castable(particlenum, int):
-                raise TEMPO_ImproperInputException("particlenum is not an integer")
-            if particlenum >= len(self._dimensions) or particlenum < -1 * len(self._dimensions):
-                raise TEMPO_ImproperInputException(f"Spin index {particlenum} was given a value outside the range -1 * len(dimensions) --> len(dimensions) - 1.")
-
-            particlenum = int(particlenum)
-
-            basisstates = []
-            
-            idlist = [identity(self._dimensions[i]) for i in np.arange(self._numparticles)]
-            
-            for i in np.arange(self._dimensions[particlenum]):
-                idlist[particlenum] = basis(self._dimensions[particlenum], i)*basis(self._dimensions[particlenum], i).dag()
-                basisstates.append(tensor(idlist))
-                idlist[particlenum] = identity(self._dimensions[particlenum])
-            
-            return basisstates
-        
-        @property
-        def dimensions(self):
-            return self._dimensions
-        
-        @dimensions.setter
-        def dimensions(self, dimensions):
-            self._dimensions = dimensions
-            self._numparticles = len(self._dimensions)
-            self._stot = [(self._dimensions[i]-1)/2 for i in np.arange(self._numparticles)]
-            self._Sx = self.oprs('x')
-            self._Sy = self.oprs('y')
-            self._Sz = self.oprs('z')
-
-        
-        @dimensions.deleter 
-        def dimensions(self):
-            del self._dimensions
-        
-        @property
-        def numparticles(self):
-            return self._numparticles
-        
-        @numparticles.setter
-        def numparticles(self, num):
-            self._numparticles = num
-        
-        @numparticles.deleter 
-        def numparticles(self):
-            del self._numparticles
-        
-        @property
-        def stot(self):
-            return self._stot
-        
-        @stot.setter
-        def stot(self, ls):
-            self._stot = ls
-        
-        @stot.deleter 
-        def stot(self):
-            del self._stot
-        
-        @property
-        def Sx(self):
-            return self._Sx
-        
-        @Sx.setter
-        def Sx(self, Sx):   
-            if type(Sx) == qobj.Qobj:
-                self._Sx = Sx
-        
-        @Sx.deleter 
-        def Sx(self):
-            del self._Sx
-        
-        @property
-        def Sy(self):
-            return self._Sy
-        
-        @Sy.setter
-        def Sy(self, Sy): 
-            if type(Sy) == qobj.Qobj:
-                self._Sy = Sy
-        
-        @Sy.deleter 
-        def Sy(self):
-            del self._Sy
-        
-        @property
-        def Sz(self):
-            return self._Sz
-        
-        @Sz.setter       
-        def Sz(self, Sz): 
-            if type(Sz) == qobj.Qobj:
-                self._Sz = Sz
-
-        @Sz.deleter   
-        def Sz(self):
-            del self._Sz
-
-    def test_ramsey_1(self):
-        def ret_transition_frq(Ham, idx_mi0, idx_mif, idx_ms0=1, idx_msf=0):
-            #
-            # Return frequency difference (MHz) between two eigenstates 
-            #
-
-            eigenvals, eigenstates = Ham.eigenstates()
-            state0 = tensor(basis(qs.dimensions[0], idx_ms0), basis(qs.dimensions[1], idx_mi0))
-            statef = tensor(basis(qs.dimensions[0], idx_msf), basis(qs.dimensions[1], idx_mif))
-
-            idx_e0 = np.argmax([np.sum(np.abs(eigenstates[i].full())*state0.full()) for i in np.arange(len(eigenvals))])
-            idx_ef = np.argmax([np.sum(np.abs(eigenstates[i].full())*statef.full()) for i in np.arange(len(eigenvals))])
-
-            frq_trans = (eigenvals[idx_ef] - eigenvals[idx_e0])/2/np.pi 
-            return frq_trans #MHz
-        
-        # initialize the NV system: (3, 2) for the dimensions of the electron's and nucleus' Hilbert spaces
-        # creates a coupled system of the two spins
-        qs = TestFullSystem.Qsys((3,2))
-        state_init = tensor(basis(3,1), basis(2, 0)) # ms = 0 (electron), mi = +1/2 state (nucleus)
-
-        #
         # Applied magnetic field
-        #
-        Bx = 0; By = 0; Bz = 300 # B field components (G)
-        B0_init = np.array([Bx, By, Bz]) # B field vector (G)
+        Bx = 0; By = 0; Bz = 1000 # B field components (G)
+        B0 = np.array([Bx, By, Bz]) # B field vector (G)
 
-        # If desired, rotate magnetic field around y-axis, by angle theta
-        theta = 0 #degrees
-        theta *= np.pi/180
-        Ry = np.array([[np.cos(theta), 0, np.sin(theta)],[0,1,0],[-np.sin(theta), 0, np.cos(theta)]]) # rotation opr
-        B0 = np.dot(Ry, B0_init) 
-        # create Hamiltonian objects to store these terms
-        HZFS = ZFS(qs)
-        HZeeNV = Zeeman(qs, B0)
-        HZeeNuc = Zeeman(qs, B0, nuc = True)
-        HHF = Hyperfine(qs)
-
-        # get the total static Hamiltonian operator
-        Hstat = HZFS.H + HZeeNV.H + HZeeNuc.H + HHF.H
-        
-        frq_trans = ret_transition_frq(Hstat, 0, 0, idx_ms0=1, idx_msf=0) # ms=0 <=> ms=+1 transition
-        assert(frq_trans == 3710.991165214304)
-
-        # Number corresponds approximately to rabi freq in MHz (exact if no detuning)
-
-        gammaNV = -2.8025
-
-        BacMHz = 30   # AC B-field frequency, ms=+1 transition, units MHz
-
-        B_amp = BacMHz / gammaNV # amplitude of B-field 
-
-        detunings = [0.5, 1, 2] # ms = +1 detuning (MHz)
+        # helper function for Hamiltonian terms
+        def dotproduct(vecV, vecU):
+            #
+            # Dot product between vector V = (Vx,Vy,Vz) and vector U = (Ux,Uy,Uz)
+            #
+            return sum([Vcomp*Ucomp for Vcomp, Ucomp in zip(vecV, vecU)])
 
 
-        # From rabi frequency & detuning, predict generalized Rabi frequency & determine length of pi pulse    
-        frqs_rabi = [((BacMHz)**2 + abs(det)**2)**0.5 for det in detunings]
-            
-        # Define duration of pi/2 pulse from predicted Rabi frequency    
-        t_pipulse = [1/frq/2 for frq in frqs_rabi]
+        # define function for static Hamiltonian
+        def func_Zeeman(Hmats, Hpars):
+            return Hpars['coeff']*Hpars['gamma']*dotproduct(Hpars['Bfield'], Hmats['S1'])
 
-        #
-        # Array of times for free evolution
-        # Keep only values greater than duration of pi/2 pulse to avoid overlapping pulses
-        #
-        tfp_max = 2 # us
-        arr_timesfp = np.linspace(0, tfp_max, 41)
-        arr_timesfp = arr_timesfp[arr_timesfp > t_pipulse[2]/2]
+        # parameters for static Hamiltonian 
+        pars_Zeeman = {'coeff': -2*np.pi, 'Bfield': B0, 'gamma': -2.8025}
+        mats_Zeeman = {'S1': (sigmax(), sigmay(), sigmaz())}
 
+        # create static Hamiltonian object
+        H_Zeeman = Hamiltonian(mats_Zeeman, pars_Zeeman, func_Zeeman)
 
-        # define the time-dependent pulse type
-        # in this case AC drive, A*cos(omega*(t+offset)+phase)
+        # get the static Hamiltonian operator
+        Hstat = H_Zeeman.H
+
+        # calculate eigenenergies
+        eig_energies = Hstat.eigenenergies()/2/np.pi
+
+        # resonance frequency of transition
+        frq_trans =  max(eig_energies) - min(eig_energies)
+                
+        # define drive amplitude 
+        gamma = -2.8025 # electron gyromagnetic ratio
+        Omega = 30   # on-resonant Rabi frequency
+        B_amp = Omega / gamma # amplitude of magnetic field 
+
+        # define the time-dependent pulse type of fucnctional form:
+        # A*cos(omega*(t+offset)+phase)
         # function must have inputs t, args
-        def ACD(t, args):
-            return args['B_amp']*np.cos(2*np.pi*args['freq']*(t + args['offset']) + args['phase'])
+        def func_X(t, args):
+            return args['B_amp']*np.cos(2*np.pi*args['freq']*t)
 
-        H_Bac = 2 * np.pi * gammaNV * qs.Sx[0] * np.sqrt(2)
-        ACDkeys = ['B_amp', 'freq', 'offset', 'phase']
+        # operator to be multiplied by function output
+        H_X = 2 * np.pi * gamma * sigmax()
+        
+        # parameter names for pulse recipe
+        keys_X = ['B_amp', 'freq']
 
         # create the pulsetype object with the operator, parameter names, and function
         # we are not inputting numerical parameters yet; this pulsetype is a blueprint for any ACD pulse
         # values will come in later
-        ACDpulsetype = Pulse_recipe(Hamiltonian(H_Bac), ACDkeys, ACD)
+        recipe_X = Pulse_recipe(Hamiltonian(H_X), keys_X, func_X)
 
-        ls_pulsehandlers_Ramsey = []
-        tlists = []
+        # create a pulse sequence
+        pseq = Pulse_sequence(Hstat = Hstat)
 
-        for i in np.arange(len(detunings)):
+        # simulation time
+        tpulse = .1 
 
-            # for each time duration of free evolution we generated, run the sequence
-            for t_fp in arr_timesfp:
-            
-                # pulse sequence handler object
-                duration_1 = t_pipulse[i]/2
-                pulse_handler_Ramsey = Pulse_sequence(Hstat = Hstat)
-                tlists.append(np.linspace(-duration_1/2, t_fp+duration_1, 100))
+        # create array of evaluation times for output
+        npts_eval = 51
+        times_eval = np.linspace(0, tpulse, npts_eval)
 
-                
-                # Loop through two Ramsey pulses
-                for tally_p in np.arange(2):
-                
-                    # define pulse timings
-                    starttime_1 = tally_p*t_fp - duration_1/2
-                
-                    Bamp = B_amp
-                    frq = frq_trans+detunings[i]
-                    offset = 0
-                    phase = 0
-                    
-                    pulse_ramsey_90 = Pulse(ACDpulsetype, start_time = starttime_1, duration = duration_1, coeff_params = {'B_amp': Bamp, 'freq': frq, 'offset': offset, 'phase': phase})
-                    pulse_handler_Ramsey.add_pulse(pulse_ramsey_90)
-                        
-                # add pulse sequence handlers to list    
-                ls_pulsehandlers_Ramsey.append(pulse_handler_Ramsey)
+        t0 = 0 # pulse start time
 
-        # define how to execute pulse
-        # this creates an Evolver object and then calls its evolve() function, which returns the state of the system at the timestamps specified in tlist
-        def exec_pulse_Ramsey(state_init, tlist, pulsehandler):
-            opts = Options(rhs_reuse = False, nsteps = 1000000, atol=1e-9, rtol=1e-9, tidy=False)
-            return Evolver(state_init, tlist, pulsehandler, opts = opts).evolve(method = 'serial')
+        pulseX = Pulse(recipe_X, start_time = t0, duration = tpulse, coeff_params = {'B_amp': B_amp, 'freq': frq_trans})
+        pseq.add_pulse(pulseX)
 
-        # execute pulse sequences in parallel
-        sim_starttime = time.time()
+        # define solver options
+        opts = Options(rhs_reuse = False, nsteps = 1000000, atol=1e-9, rtol=1e-9, tidy=False)
 
-        n = len(ls_pulsehandlers_Ramsey)
+        # initialize evolver objects (no difference at this point)
+        ev = Evolver(state_init, times_eval, pseq, opts = opts)
 
-        # tlist has to be sufficiently large for qutip's mesolve to be able to use it
-        # inputs are initial state, tlist, and pulse sequence, as outlined in the args for exec_pulse_Ramsey
-        inputs = zip([state_init]*n, tlists, ls_pulsehandlers_Ramsey)
-
-        with Pool(processes = n) as pool:
-            output_map = pool.starmap(exec_pulse_Ramsey, inputs)
-            pool.close()
-            pool.join()
-
-        # output_map = list(output_map)
-
-        # if you are on Mac, and want to see a progress bar, you can uncomment below
-        # output_map = parallel_map(exec_pulse_Ramsey, np.arange(len(ls_pulsehandlers_Ramsey)), 
-        #                             task_args=(state_init, tlists, ls_pulsehandlers_Ramsey), progress_bar=True)
-
-        sim_endtime = time.time()
-
-        # the only purpose of the code in this cell is to separate the output of the parallel map into the 
-        # three detunings. The first 40 entries in output_parallelmap are for detuning = 0.5 MHz, etc. 
-
-        n_detunings = len(detunings) # number of separate time sweeps, one for each detuning
-        len_timesweep = int(len(output_map)/n_detunings) # length of one time-sweep array's results
-
-        ls_states_timesweep = [[]]*n_detunings # create a 2D array to store each of the sweeps' results
-
-        for i in np.arange(n_detunings):
-            ls_states_timesweep[i] = [elem.states[-1] for elem in output_map[i*len_timesweep:(i+1)*len_timesweep]] 
-            # By taking the very last element of each pulse, we get the state of the system at the end of 
-            # each pulse
-
-        popdata = [[]]*n_detunings
-        exp_op = qs.basisstates(0)[1]
-
-        expected_res = [np.array([0.00753587, 0.05681842, 0.15033208, 0.28058748, 0.42797377,
-            0.58270007, 0.73386795, 0.85885509, 0.94749185, 0.99479686,
-            0.99245684, 0.94308892, 0.84981552, 0.71951621, 0.57180232,
-            0.41734384, 0.26631612, 0.1410456 , 0.0524556 , 0.00522694]),
-            np.array([0.02817681, 0.21253892, 0.51165658, 0.80131285, 0.97830604,
-            0.97181222, 0.78743444, 0.48845009, 0.19858431, 0.02171102,
-            0.02821734, 0.2125158 , 0.51149282, 0.80146421, 0.97823406,
-            0.97178005, 0.78744481, 0.48862725, 0.19843558, 0.0217811 ]),
-            np.array([0.1061628 , 0.67031253, 0.99972584, 0.63679219, 0.0870632 ,
-            0.10621763, 0.67019323, 0.99972153, 0.63683917, 0.0870906 ,
-            0.10627034, 0.67007257, 0.9997172 , 0.6368941 , 0.08711588,
-            0.10632   , 0.66995135, 0.99971277, 0.63695461, 0.08713781])]
-
-        for i in np.arange(n_detunings):
-            popdata[i] = expect(exp_op, ls_states_timesweep[i])
-            c = 0
-            for j in range(len(popdata[i]), 2):
-                assert(math.isclose(popdata[i][j], expected_res[i][c], abs_tol=1e-7, rel_tol=1e-7))
-                c += 1
-    
-    def test_ramsey_2(self):
-        def ret_transition_frq(Ham, idx_mi0, idx_mif, idx_ms0=1, idx_msf=0):
-            #
-            # Return frequency difference (MHz) between two eigenstates 
-            #
-
-            eigenvals, eigenstates = Ham.eigenstates()
-            state0 = tensor(basis(qs.dimensions[0], idx_ms0), basis(qs.dimensions[1], idx_mi0))
-            statef = tensor(basis(qs.dimensions[0], idx_msf), basis(qs.dimensions[1], idx_mif))
-
-            idx_e0 = np.argmax([np.sum(np.abs(eigenstates[i].full())*state0.full()) for i in np.arange(len(eigenvals))])
-            idx_ef = np.argmax([np.sum(np.abs(eigenstates[i].full())*statef.full()) for i in np.arange(len(eigenvals))])
-
-            frq_trans = (eigenvals[idx_ef] - eigenvals[idx_e0])/2/np.pi 
-            return frq_trans #MHz
+        # Run evaluation
+        result = ev.evolve(method = 'regular')
         
-        # initialize the NV system: (3, 2) for the dimensions of the electron's and nucleus' Hilbert spaces
-        # creates a coupled system of the two spins
-        qs = TestFullSystem.Qsys((3,2))
-        state_init = tensor(basis(3,1), basis(2, 0)) # ms = 0 (electron), mi = +1/2 state (nucleus)
-
-        #
-        # Applied magnetic field
-        #
-        Bx = 0; By = 0; Bz = 300 # B field components (G)
-        B0_init = np.array([Bx, By, Bz]) # B field vector (G)
-
-        # If desired, rotate magnetic field around y-axis, by angle theta
-        theta = 0 #degrees
-        theta *= np.pi/180
-        Ry = np.array([[np.cos(theta), 0, np.sin(theta)],[0,1,0],[-np.sin(theta), 0, np.cos(theta)]]) # rotation opr
-        B0 = np.dot(Ry, B0_init) 
-        # create Hamiltonian objects to store these terms
-        HZFS = ZFS(qs)
-        HZeeNV = Zeeman(qs, B0)
-        HZeeNuc = Zeeman(qs, B0, nuc = True)
-        HHF = Hyperfine(qs)
-
-        # get the total static Hamiltonian operator
-        Hstat = HZFS.H + HZeeNV.H + HZeeNuc.H + HHF.H
+        expectations_Z = expect(sigmaz(), result.states)
         
-        frq_trans = ret_transition_frq(Hstat, 0, 0, idx_ms0=1, idx_msf=0) # ms=0 <=> ms=+1 transition
-        exp_op = qs.basisstates(0)[1]
-
+        expected_result_Z =  [-1.0,                   -0.929289167227064,     -0.7305134890711701,    -0.4233591334991757,    
+                              -0.06520482126415034,   0.3105095378983825,     0.6371636330303323,     0.8758275976559109,
+                              0.992369285264469,      0.9692342286621923,     0.8075202090657745,     0.5373768494538111,     
+                              0.18672953649056434,    -0.1880238037326829,    -0.5342753330335834,    -0.8105018963653297,    
+                              -0.9679197364087414,    -0.9918544221210958,    -0.8767714784069418,    -0.6376880059957346, 
+                              -0.30752019892974564,   0.0603667302309191,     0.4281886123510632,     0.7274148932986982,     
+                              0.9302446845226064,     0.9999964185183823,     0.9302509040466652,     0.7274265344102241,
+                              0.4282039417033618,     0.060383661411712086,   -0.3075040547088368,    -0.6376749414273759,
+                              -0.8767633237162767,    -0.9918522637037576,    -0.9679239961923038,    -0.8105118338968311,    
+                              -0.5342896802122861,    -0.1880404790132824,    0.18671286302881834,    0.5373625317541852, 
+                              0.8075101983878971,     0.9692300538399772,     0.9923713756209621,     0.8758357842500599,     
+                              0.6371767176957583,     0.3105256705768797,     -0.06518788167009171,   -0.4233437552879566,    
+                              -0.7305019029266913,    -0.9292829035348242,    -0.9999999998496966 
+                              ]
         
-        # Number corresponds approximately to rabi freq in MHz (exact if no detuning)
-
-        gammaNV = -2.8025
-
-        BacMHz = 30   # AC B-field frequency, ms=+1 transition, units MHz
-
-        B_amp = BacMHz / gammaNV # amplitude of B-field 
-
-        detunings = [0.5, 1, 2] # ms = +1 detuning (MHz)
-
-
-        # define the time-dependent pulse type
-        # in this case AC drive, A*cos(omega*(t+offset)+phase)
-        # function must have inputs t, args
-        def ACD(t, args):
-            return args['B_amp']*np.cos(2*np.pi*args['freq']*(t + args['offset']) + args['phase'])
-
-        # define how to execute pulse
-        # this creates an Evolver object and then calls its evolve() function, which returns the state of the system at the timestamps specified in tlist
-        def exec_pulse_Ramsey(state_init, tlist, pulsehandler):
-            opts = Options(rhs_reuse = False, nsteps = 1000000, atol=1e-9, rtol=1e-9, tidy=False)
-            return Evolver(state_init, tlist, pulsehandler, opts = opts).evolve(method = 'serial')
-
-        H_Bac = 2 * np.pi * gammaNV * qs.Sx[0] * np.sqrt(2)
-        ACDkeys = ['B_amp', 'freq', 'offset', 'phase']
-
-        # create the pulsetype object with the operator, parameter names, and function
-        # we are not inputting numerical parameters yet; this pulsetype is a blueprint for any ACD pulse
-        # values will come in later
-        ACDpulsetype = Pulse_recipe(Hamiltonian(H_Bac), ACDkeys, ACD)
-
-        det = 1
-        frq_rabi = ((BacMHz)**2 + abs(det)**2)**0.5
-        t_pipulse = 1/frq_rabi/2
-        #print(t_pipulse) # units us
-
-        # try different pulse durations: pi/4, pi/3, pi/2, 3pi/2
-        t_pulses = [t_pipulse/4, t_pipulse/3, t_pipulse/2, 3*t_pipulse/4]
-
-        #
-        # Array of times for free evolution
-        # Keep only values greater than duration of pi/4 pulse to avoid overlapping pulses
-        #
-        tfp_max = 2 # us
-        arr_timesfp = np.linspace(0, tfp_max, 41)
-        arr_timesfp = arr_timesfp[arr_timesfp > t_pulses[3]]
-
-        ls_pulsehandlers_Ramsey = []
-        tlists = []
-
-        for i in np.arange(len(t_pulses)):
-
-            # for each time duration of free evolution we generated, run the sequence
-            for t_fp in arr_timesfp:
-            
-                # pulse sequence handler object
-                duration_1 = t_pulses[i]
-                pulse_handler_Ramsey = Pulse_sequence(Hstat = Hstat)
-                tlists.append(np.linspace(-duration_1/2, t_fp+duration_1, 100))
-
-                
-                # Loop through two Ramsey pulses
-                for tally_p in np.arange(2):
-                
-                    # define pulse timings
-                    starttime_1 = tally_p*t_fp - duration_1/2
-                
-                    Bamp = B_amp
-                    frq = frq_trans+det
-                    phase = 0
-                    offset = 0
-
-                    # create pulse object and add to pulse sequence handler
-                    pulse_ramsey_90 = Pulse(ACDpulsetype, start_time = starttime_1, duration = duration_1, coeff_params = {'B_amp': Bamp, 'freq': frq, 'offset': offset, 'phase': phase})
-                    pulse_handler_Ramsey.add_pulse(pulse_ramsey_90)
-                        
-                # add pulse sequence handlers to list    
-                ls_pulsehandlers_Ramsey.append(pulse_handler_Ramsey)
-
-        sim_starttime = time.time()
-
-
-        n = len(ls_pulsehandlers_Ramsey)
-        inputs = zip([state_init]*n, tlists, ls_pulsehandlers_Ramsey)
-
-        with Pool(processes = n) as pool:
-            output_map = pool.starmap(exec_pulse_Ramsey, inputs)
-            pool.close()
-            pool.join()
-
-        output_map = list(output_map)
-
-        sim_endtime = time.time()
-        print('Time taken (s)', round(sim_endtime - sim_starttime,3))
-
-        n_pulsedurations = len(t_pulses) # number of separate time sweeps, one for each pulse duration
-        len_timesweep = int(len(output_map)/n_pulsedurations) # length of one time-sweep array's results
-
-        ls_states_timesweep = [[]]*n_pulsedurations # create a 2D array to store each of the sweeps' results
-
-        for i in np.arange(n_pulsedurations):
-            ls_states_timesweep[i] = [elem.states[-1] for elem in output_map[i*len_timesweep:(i+1)*len_timesweep]]
-
-        popdata = [[]]*n_pulsedurations
-        colors = ['firebrick', 'gold', 'forestgreen', 'blue']
-
-        expected_res = [
-            np.array([0.51116362, 0.54810724, 0.60407261, 0.67286966, 0.74899093,
-       0.8263921 , 0.89708559, 0.9528112 , 0.98796277, 0.99999674,
-       0.98792814, 0.95226783, 0.89635978, 0.82635388, 0.74946904,
-       0.67283902, 0.60346033, 0.54786135, 0.51153689, 0.49866914,
-       0.51137728, 0.54828321, 0.60434595, 0.67320852, 0.74922286,
-       0.82643966, 0.89705308, 0.95281246, 0.98798532, 0.99999639,
-       0.98794374, 0.95235736, 0.8964987 , 0.82648208, 0.74959272,
-       0.67302124, 0.60375195, 0.548264  , 0.51198013, 0.49903325]),
-            np.array([0.27212193, 0.32399821, 0.4060142 , 0.51061952, 0.62738235,
-       0.74360858, 0.84698853, 0.92839329, 0.98132388, 0.99999386,
-       0.9809245 , 0.92653098, 0.84426302, 0.74193479, 0.62680273,
-       0.50930086, 0.40357756, 0.32213621, 0.27170368, 0.25479499,
-       0.2725701 , 0.32442503, 0.40629058, 0.51070463, 0.62736857,
-       0.74365074, 0.84710759, 0.92845848, 0.9812848 , 0.99998289,
-       0.98101991, 0.92659465, 0.84420041, 0.74194021, 0.62710308,
-       0.50977937, 0.40391333, 0.32224134, 0.27179567, 0.25507423]),
-            np.array([2.81768086e-02, 1.00969217e-01, 2.12538921e-01, 3.54469069e-01,
-       5.11656576e-01, 6.65465259e-01, 8.01312849e-01, 9.09071427e-01,
-       9.78306044e-01, 9.99849303e-01, 9.71812218e-01, 8.98946594e-01,
-       7.87434440e-01, 6.45639740e-01, 4.88450092e-01, 3.34500287e-01,
-       1.98584306e-01, 9.08893791e-02, 2.17110212e-02, 1.67439584e-04,
-       2.82173360e-02, 1.01084100e-01, 2.12515805e-01, 3.54236673e-01,
-       5.11492821e-01, 6.65562186e-01, 8.01464206e-01, 9.09056907e-01,
-       9.78234063e-01, 9.99852244e-01, 9.71780054e-01, 8.98831260e-01,
-       7.87444813e-01, 6.45866074e-01, 4.88627247e-01, 3.34420943e-01,
-       1.98435581e-01, 9.08971432e-02, 2.17810981e-02, 1.66991685e-04]),
-            np.array([0.51988683, 0.55882503, 0.6192722 , 0.69266564, 0.77005096,
-       0.84571749, 0.91308609, 0.96394199, 0.99308258, 0.99913758,
-       0.98096026, 0.93865659, 0.87814315, 0.80809936, 0.73294319,
-       0.65537159, 0.5844311 , 0.53315331, 0.50726436, 0.50356107,
-       0.51992064, 0.55872569, 0.61901263, 0.69249781, 0.7699872 ,
-       0.84561187, 0.91298242, 0.96394295, 0.99311652, 0.99913115,
-       0.98101505, 0.93875349, 0.87801088, 0.80772727, 0.73276425,
-       0.65558629, 0.58458074, 0.53279418, 0.50668375, 0.50329453])
-        ]
-
-        for i in np.arange(n_pulsedurations):
-            popdata[i] = expect(exp_op, ls_states_timesweep[i])
-            for j in range(len(popdata[i])):
-                assert(math.isclose(popdata[i][j], expected_res[i][j], abs_tol=1e-7, rel_tol=1e-7))
+        atol = 1e-7
+        rtol = 1e-7
+        for i, x in enumerate(expected_result_Z):
+            assert(math.isclose(x, expectations_Z[i], abs_tol=atol, rel_tol=rtol))
