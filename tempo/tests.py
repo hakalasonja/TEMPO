@@ -10,7 +10,7 @@ import numpy as np
 import types
 from collections.abc import Iterable
 
-from qutip import Qobj, sigmax, sigmay, sigmaz, basis, Options
+from qutip import sigmax, sigmay, sigmaz, basis, Options
 
 from tempo.exceptions import TEMPO_ImproperInputException, TEMPO_NullValueException
 from tempo.hamiltonian import Hamiltonian
