@@ -77,10 +77,12 @@ Installation can be done quickly and easily with conda. First, ensure you have s
 conda config --append channels conda-forge
 ```
 
-2. Then build an environment with conda. Make sure you are in the root folder of this project.
+2. Then build an environment with conda. Make sure you are in the root folder of this project. Your python version should be 
+version 3, python2 is not supported. Any version should work assuming that the subsequent version is compatible with your installed
+version of numpy and qutip, and multiprocessing is supported. 
 
 ```
-conda create --name YOUR_ENV_NAME python=3.10.15
+conda create --name YOUR_ENV_NAME python=3.**.**
 conda activate YOUR_ENV_NAME
 pip install -r requirements.txt
 ```

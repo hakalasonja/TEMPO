@@ -1,4 +1,4 @@
-TEMPO.rst
+Tempo
 ==========
 
 .. automodule:: tempo.pulse
@@ -12,6 +12,11 @@ TEMPO.rst
    :show-inheritance:
 
 .. automodule:: tempo.pulse_sequence
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: tempo.hamiltonian
    :members:
    :undoc-members:
    :show-inheritance:
