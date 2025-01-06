@@ -10,9 +10,6 @@ ______________________   _____ __________________
   </pre>
 
   <p align="center">
-    Simulating overlapping pulses in a variety of shapes is a challenging task that requires repeated implementation 
-    in qutip. Further, existing qutip simulations for such tasks suffer from inefficient applications of mesolve 
-    with overlapping pulses. TEMPO removes these issues as a one-stop wrapper over top of qutip that streamlines and speeds up the simulation of pulse sequences. 
     <br />
     <a href="https://tempo-documentation.readthedocs.io/en/latest/"><strong>Explore the docs »</strong></a>
     <br />
@@ -27,8 +24,8 @@ ______________________   _____ __________________
 
 <!-- Badges -->
 <p align="center">
-  <a href="https://github.com/georgew79/tempo/actions/workflows/test.yml">
-    <img src="https://github.com/georgew79/tempo/actions/workflows/test.yml/badge.svg" alt="Build Status">
+  <a href="https://github.com/oonjnertzern/tempo/actions/workflows/test.yml">
+    <img src="https://github.com/oonjnertzern/tempo/actions/workflows/test.yml/badge.svg" alt="Build Status">
   </a>
   <a href="https://github.com/username/tempo/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/username/tempo.svg" alt="License">
@@ -54,17 +51,21 @@ ______________________   _____ __________________
 - [License](#license)
 - [Contact](#contact)
 
-## About TEMPO
+# Summary
 
-**REPEATED TEXT:** Simulating overlapping pulses in a variety of shapes is a challenging task that requires repeated implementation in qutip. Further, existing qutip simulations for such tasks suffer from inefficient applications of mesolve with overlapping pulses. TEMPO removes these issues as a one-stop wrapper over top of qutip that streamlines and speeds up the simulation of pulse sequences. 
+TEMPO (Time-dependent Evolution of Multiple Pulse Operations) offers accessible and efficient simulations of pulse sequences in Python, using the suite of master equation solvers available in the Quantum Toolbox in Python (QuTiP). 
+Besides straightforward definition of pulse sequence structures, including any underlying time-dependent Hamiltonians and pulse timing information, TEMPO enables faster simulations of pulse sequence dynamics (compared to naive implementations using QuTiP) while remaining compatible with the existing collection of QuTiP subpackages. Utilizing the master equation solvers that are native to QuTiP, TEMPO provides two key advantages for numerical simulations of pulse sequence dynamics.
 
-**JJ THIS SECTION IS BEST LEFT TO YOU**
 
-## Features
+**Ease of Use:** By incorporating both the characteristics of a Hamiltonian and its time constraints as necessary properties, pulses are constructed individually then collated to form a 'pulse sequence'. 
+Time evolution is performed without the need to manually deactivate each pulse Hamiltonian outside its given time interval.
+Using pulse 'recipes' in TEMPO, the creation of pulses with overlapping functional forms is streamlined, with parameters that can be tuned for individual pulses.
 
-- **Feature One**: Define an architecture for your pulses with 'Pulse Recipes' that allow different pulses in different scenarios to follow the same overall structure.
-- **Feature Two**: Instantiate your recipes into a single sequence with our easy-to-use Hamiltonian class to define the static Hamiltonians.
-- **Feature Three**: Efficiently evolve your sequence using qutip underlying code in a more efficient manner than a standard qutip simulation.
+**Faster Executions of Time Evolution:** 
+For time evolution, TEMPO organizes each pulse sequence as a series of time segments, preserving only the pulses that are active within each segment.
+This avoids overheads incurred by repeated inspections of inactive pulse(s), significantly speeding up evaluation of system evolution.
+
+
 
 ## Installation
 
