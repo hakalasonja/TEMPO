@@ -11,6 +11,7 @@ TEMPO documentation
    :caption: Contents:
 
    tempo
+   misc
 
 Indices and tables
 ==================
