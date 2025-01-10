@@ -1,4 +1,4 @@
-Tempo
+TEMPO
 ==========
 
 .. automodule:: tempo.pulse
