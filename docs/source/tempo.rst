@@ -25,8 +25,3 @@ TEMPO
    :members:
    :undoc-members:
    :show-inheritance:
-
-.. automodule:: tempo.exceptions
-   :members:
-   :undoc-members:
-   :show-inheritance:
