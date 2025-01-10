@@ -1,4 +1,4 @@
-Miscellaneous
+Utilities
 ==========
 
 .. automodule:: tempo.exceptions
