@@ -9,18 +9,6 @@ ______________________   _____ __________________
                    \/         \/                 \/                                   
   </pre>
 
-  <p align="center">
-    <br />
-    <a href="https://tempo-documentation.readthedocs.io/en/latest/"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/username/tempo">View Demo</a>
-    ·
-    <a href="https://github.com/username/tempo/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/username/tempo/issues">Request Feature</a>
-  </p>
-</p>
 
 <!-- Badges -->
 <p align="center">
