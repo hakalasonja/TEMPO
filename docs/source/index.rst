@@ -5,12 +5,64 @@
 
 TEMPO documentation
 =====================================
-   
+
+Welcome to the TEMPO documentation page! 
+
+Introduction
+==================
+
+TEMPO (Time-dependent Evolution of Multiple Pulse Operations) offers accessible and efficient simulations of pulse sequences in Python, using the suite of master equation solvers available in the Quantum Toolbox in Python (QuTiP). 
+Besides straightforward definition of pulse sequence structures, including any underlying time-dependent Hamiltonians and pulse timing information, TEMPO enables faster simulations of pulse sequence dynamics (compared to naive implementations using QuTiP) 
+while remaining compatible with the existing collection of QuTiP subpackages. 
+Utilizing the master equation solvers that are native to QuTiP, TEMPO provides two key 
+advantages for numerical simulations of pulse sequence dynamics.
+
+Installation
+==================
+
+Installation can be done quickly and easily with conda. First, ensure you have setup conda, then follow this tutorial.
+
+1. Run the following to ensure all packages can be discovered. 
+
+```
+conda config --append channels conda-forge
+```
+
+2. Then build an environment with conda. Make sure you are in the root folder of this project. Your python version should be 
+version 3, python2 is not supported. Any version should work assuming that the subsequent version is compatible with your installed
+version of numpy and qutip, and multiprocessing is supported. 
+
+```
+conda create --name YOUR_ENV_NAME python=3.**.**
+conda activate YOUR_ENV_NAME
+pip install -r requirements.txt
+```
+
+The requirements_docs.txt file provides more specific packages to aid in testing and building when the library is deployed to github. 
+While you are welcome to use this for installation be aware that the most streamlined installation process uses the standard requirements.txt file instead.
+
+If you do not use conda, any other installation approach is perfectly viable AS LONG AS you have the libraries 
+in requirements.txt installed. 
+
+
+Using the Docs
+==================
+
+The documentation page includes all primary modules of the library under 'TEMPO'. This includes the classes 
+'Pulse', 'Pulse_recipe', Pulse_sequence', 'Hamiltonian', and 'Evolver'. Classes for exception handling and other 
+misc uses are in Utilities. Please click on any of these modules to expand and explore in looking for whichever
+classes, methods, etc. are of interest to you. There is also an available search feature in the top left of the page, 
+or the bottom of this one. 
+
+TEMPO Library 
+==================
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   modules
+   tempo
+   misc
 
 Indices and tables
 ==================
