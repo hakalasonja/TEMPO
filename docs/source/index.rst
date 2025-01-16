@@ -28,7 +28,7 @@ conda config --append channels conda-forge
 
 2. Build an environment with conda. Make sure you are in the root folder of this project. Your python version should be 
 version 3, python 2 is not supported. 
-Please ensure that the python version is compatible with the packages *numpy* and *qutip*, and that *multiprocessing* is supported. 
+Please ensure that the python version is compatible with the packages **numpy** and **qutip**, and that **multiprocessing** is supported. 
 ```
 conda create --name YOUR_ENV_NAME python=3.**.**
 conda activate YOUR_ENV_NAME
@@ -36,7 +36,7 @@ pip install -r requirements.txt
 ```
 
 The *requirements_docs.txt* file provides more specific packages to aid in testing and building when the library is deployed to github. 
-While you are welcome to use this for installation be aware that the most streamlined installation process uses the standard requirements.txt file instead.
+While you are welcome to use this for installation be aware that the most streamlined installation process uses the standard *requirements.txt* file instead.
 
 If you do not use conda, other installation approaches (e.g. pip, miniconda, etc.) can work as long as you have the libraries 
 in *requirements.txt* installed. 
@@ -45,9 +45,9 @@ in *requirements.txt* installed.
 Using the Docs
 ==================
 
-The documentation page includes all primary modules of the library under *TEMPO*. This includes the classes 
-'Pulse', 'Pulse_recipe', Pulse_sequence', 'Hamiltonian', and `Evolver`. Classes for exception handling and other 
-misc uses are in Utilities. Please click on any of these modules to expand and explore in looking for whichever
+The documentation page includes all primary modules of the library under the tab **TEMPO**. This includes the classes 
+*Pulse*, *Pulse_recipe*, *Pulse_sequenc*, *Hamiltonian*, and *Evolver*. Classes for exception handling and other 
+miscellaneous operations are under **Utilities**. Please click on any of these modules to expand and explore in looking for whichever
 classes, methods, etc. are of interest to you. There is also an available search feature in the top left of the page, 
 or the bottom of this one. 
 
