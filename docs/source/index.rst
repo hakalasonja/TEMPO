@@ -22,6 +22,9 @@ Installation can be done with conda. First, ensure you have setup conda, then fo
 
 1. Run the following to ensure all packages can be discovered. 
 
+.. code-block:: bash
+    conda config --append channels conda-forge
+
 ```
 conda config --append channels conda-forge
 ```
