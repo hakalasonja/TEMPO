@@ -41,18 +41,14 @@ Please ensure that the python version is compatible with the packages **numpy** 
 The *requirements_docs.txt* file provides more specific packages to aid in testing and building when the library is deployed to github. 
 While you are welcome to use this for installation be aware that the most streamlined installation process uses the standard *requirements.txt* file instead.
 
-If you do not use conda, other installation approaches (e.g. pip, miniconda, etc.) can work as long as you have the libraries 
-in *requirements.txt* installed. 
+If you do not use conda, other installation approaches can work as long as you have the libraries in *requirements.txt* installed. 
 
 
 Using the Docs
 ==================
 
-The documentation page includes all primary modules of the library under the tab **TEMPO**. This includes the classes 
-*Pulse*, *Pulse_recipe*, *Pulse_sequenc*, *Hamiltonian*, and *Evolver*. Classes for exception handling and other 
-miscellaneous operations are under **Utilities**. Please click on any of these modules to expand and explore in looking for whichever
-classes, methods, etc. are of interest to you. There is also an available search feature in the top left of the page, 
-or the bottom of this one. 
+The documentation page includes all primary modules of the library under the tab **TEMPO**. This includes the classes *Pulse*, *Pulse_recipe*, *Pulse_sequenc*, *Hamiltonian*, and *Evolver*. Classes for exception handling and other miscellaneous operations are under **Utilities**. Please click on any of these modules for more details.
+You may also use the available search feature in the top left of the page, or the bottom of this one. 
 
 TEMPO Library 
 ==================
