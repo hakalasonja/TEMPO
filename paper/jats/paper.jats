@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.2 20190208//EN"
+                  "JATS-publishing1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" dtd-version="1.2" article-type="other">
+<front>
+<journal-meta>
+<journal-id></journal-id>
+<journal-title-group>
+<journal-title>Journal of Open Source Software</journal-title>
+<abbrev-journal-title>JOSS</abbrev-journal-title>
+</journal-title-group>
+<issn publication-format="electronic">2475-9066</issn>
+<publisher>
+<publisher-name>Open Journals</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="publisher-id">0</article-id>
+<article-id pub-id-type="doi">N/A</article-id>
+<title-group>
+<article-title>TEMPO: A Python Package for Time Evolution of Pulse
+Sequences in QuTiP</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author" equal-contrib="yes" corresp="yes">
+<contrib-id contrib-id-type="orcid">https://orcid.org/0000-0002-5716-5653</contrib-id>
+<name>
+<surname>Oon</surname>
+<given-names>Jner Tzern</given-names>
+</name>
+<xref ref-type="aff" rid="aff-1"/>
+<xref ref-type="aff" rid="aff-2"/>
+<xref ref-type="corresp" rid="cor-1"><sup>*</sup></xref>
+</contrib>
+<contrib contrib-type="author" equal-contrib="yes">
+<name>
+<surname>Hakala</surname>
+<given-names>Sonja A.</given-names>
+</name>
+<xref ref-type="aff" rid="aff-1"/>
+</contrib>
+<contrib contrib-type="author">
+<name>
+<surname>Witt</surname>
+<given-names>George A.</given-names>
+</name>
+<xref ref-type="aff" rid="aff-1"/>
+</contrib>
+<contrib contrib-type="author">
+<name>
+<surname>Walsworth</surname>
+<given-names>Ronald</given-names>
+</name>
+<xref ref-type="aff" rid="aff-1"/>
+<xref ref-type="aff" rid="aff-2"/>
+<xref ref-type="aff" rid="aff-3"/>
+</contrib>
+<aff id="aff-1">
+<institution-wrap>
+<institution>Department of Physics, University of Maryland, College
+Park, Maryland 20742, USA</institution>
+</institution-wrap>
+</aff>
+<aff id="aff-2">
+<institution-wrap>
+<institution>Quantum Technology Center, University of Maryland, College
+Park, Maryland 20742, USA</institution>
+</institution-wrap>
+</aff>
+<aff id="aff-3">
+<institution-wrap>
+<institution>Department of Electrical and Computer Engineering,
+University of Maryland, College Park, Maryland 20742, USA</institution>
+</institution-wrap>
+</aff>
+</contrib-group>
+<author-notes>
+<corresp id="cor-1">* E-mail: <email></email></corresp>
+</author-notes>
+<volume>¿VOL?</volume>
+<issue>¿ISSUE?</issue>
+<fpage>¿PAGE?</fpage>
+<permissions>
+<copyright-statement>Authors of papers retain copyright and release the
+work under a Creative Commons Attribution 4.0 International License (CC
+BY 4.0)</copyright-statement>
+<copyright-year>1970</copyright-year>
+<copyright-holder>The article authors</copyright-holder>
+<license license-type="open-access" xlink:href="https://creativecommons.org/licenses/by/4.0/">
+<license-p>Authors of papers retain copyright and release the work under
+a Creative Commons Attribution 4.0 International License (CC BY
+4.0)</license-p>
+</license>
+</permissions>
+<kwd-group kwd-group-type="author">
+<kwd>Python</kwd>
+<kwd>physics</kwd>
+<kwd>quantum</kwd>
+<kwd>pulse sequence</kwd>
+</kwd-group>
+</article-meta>
+</front>
+<body>
+<sec id="summary">
+  <title>Summary</title>
+  <p>TEMPO (Time-dependent Evolution of Multiple Pulse Operations)
+  offers accessible and efficient simulations of pulse sequences in
+  Python, using the suite of master equation solvers available in the
+  Quantum Toolbox in Python (QuTiP). It enables straightforward
+  definition of pulse sequence structures, including any underlying
+  time-dependent Hamiltonians and pulse timing information, and faster
+  simulations of pulse sequence dynamics (compared to naive
+  implementations using QuTiP) while remaining compatible with the
+  existing collection of QuTiP subpackages. Given the ubiquitous use of
+  pulse sequences throughout quantum information/computing sciences,
+  magnetic resonance studies, and quantum metrology, this work has
+  immediate relevance to a wide array of research applications.</p>
+</sec>
+<sec id="statement-of-need">
+  <title>Statement of Need</title>
+  <p>Pulse sequences typically contain a series of discrete operations
+  (pulses) using radio frequency, microwave, or optical fields. Their
+  application for quantum control has an extensive history across atomic
+  physics
+  (<xref alt="Vitanov et al., 2001" rid="ref-Vitanov2001" ref-type="bibr">Vitanov
+  et al., 2001</xref>); nuclear magnetic resonance
+  (<xref alt="Levitt, 2013" rid="ref-Levitt2013" ref-type="bibr">Levitt,
+  2013</xref>); and solid-state spin systems used in quantum
+  technologies
+  (<xref alt="Barry et al., 2020" rid="ref-Barry2020" ref-type="bibr">Barry
+  et al., 2020</xref>); and a broad range of other platforms. In recent
+  years, research into quantum technologies has driven the development
+  of advanced software tools for numerical simulations of quantum
+  systems
+  (<xref alt="Fingerhuth et al., 2018" rid="ref-Fingerhuth2018" ref-type="bibr">Fingerhuth
+  et al., 2018</xref>). In particular, the QuTiP (Quantum Toolbox in
+  Python) framework provides open-source tools for simulations of open
+  quantum systems, and has received prolific use across numerous quantum
+  applications
+  (<xref alt="Johansson et al., 2012" rid="ref-Johansson2012" ref-type="bibr">Johansson
+  et al., 2012</xref>,
+  <xref alt="2013" rid="ref-Johansson2013" ref-type="bibr">2013</xref>).
+  Utilizing the master equation solvers that are native to QuTiP, TEMPO
+  provides two key advantages for numerical simulations of pulse
+  sequence dynamics.</p>
+  <p><bold>Ease of Use:</bold> By incorporating both the characteristics
+  of a Hamiltonian and its time constraints as necessary properties,
+  pulses are first constructed individually, then collated to form a
+  ‘pulse sequence’. Time evolution is performed without the need to
+  manually deactivate each pulse Hamiltonian outside its given time
+  interval. Using pulse ‘recipes’ in TEMPO, the creation of pulses with
+  overlapping functional forms is streamlined, with parameters that can
+  be tuned for individual pulses.</p>
+  <p><bold>Faster Executions of Time Evolution:</bold> TEMPO organizes
+  each pulse sequence as a series of time segments, preserving only the
+  pulses that are active within each segment. This avoids overheads
+  incurred by repeated inspections of inactive pulse(s), significantly
+  speeding up evaluation of system evolution.</p>
+  <fig>
+    <caption><p>Outline of steps in TEMPO used to perform time evolution
+    due to a pulse sequence. First, each pulse recipe contains the
+    functional form of a time-dependent Hamiltonian
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[H_i(t) = \hat{O}_i \cdot f_i(\mathbf{x}, t)]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>H</mml:mi><mml:mi>i</mml:mi></mml:msub><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>t</mml:mi><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mo>=</mml:mo><mml:msub><mml:mover><mml:mi>O</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mi>i</mml:mi></mml:msub><mml:mo>⋅</mml:mo><mml:msub><mml:mi>f</mml:mi><mml:mi>i</mml:mi></mml:msub><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐱</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:mrow></mml:math></alternatives></inline-formula>.
+    Pulse recipe(s) are used to create individual pulse(s)
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[P_1, \dots, P_n]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>P</mml:mi><mml:mn>1</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:mi>…</mml:mi><mml:mo>,</mml:mo><mml:msub><mml:mi>P</mml:mi><mml:mi>n</mml:mi></mml:msub></mml:mrow></mml:math></alternatives></inline-formula>,
+    with individual parameter settings <inline-formula><alternatives>
+    <tex-math><![CDATA[\mathbf{x_1}, \dots, \mathbf{x_n}]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>𝐱</mml:mi><mml:mn>𝟏</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:mi>…</mml:mi><mml:mo>,</mml:mo><mml:msub><mml:mi>𝐱</mml:mi><mml:mi>𝐧</mml:mi></mml:msub></mml:mrow></mml:math></alternatives></inline-formula>,
+    respectively. The pulses are organized into a sequence along with an
+    optional static Hamiltonian. Next, the pulse sequence is provided to
+    the Evolver, with an initial system state
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[\psi(t_0)]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>ψ</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>0</mml:mn></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:mrow></mml:math></alternatives></inline-formula>
+    and an array of evaluation times <inline-formula><alternatives>
+    <tex-math><![CDATA[(t_0, t_1, \dots, t_m)]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>0</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>1</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:mi>…</mml:mi><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mi>m</mml:mi></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>.
+    Time evolution returns the state <inline-formula><alternatives>
+    <tex-math><![CDATA[\psi(t_0), \dots, \psi(t_m)]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>ψ</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>0</mml:mn></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mo>,</mml:mo><mml:mi>…</mml:mi><mml:mo>,</mml:mo><mml:mi>ψ</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mi>m</mml:mi></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:mrow></mml:math></alternatives></inline-formula>
+    at these times; if operators <inline-formula><alternatives>
+    <tex-math><![CDATA[E_0, \dots, E_j]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>E</mml:mi><mml:mn>0</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:mi>…</mml:mi><mml:mo>,</mml:mo><mml:msub><mml:mi>E</mml:mi><mml:mi>j</mml:mi></mml:msub></mml:mrow></mml:math></alternatives></inline-formula>
+    are provided, the operator expectation values
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[E_0(t_0), \dots, E_j(t_0)]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>E</mml:mi><mml:mn>0</mml:mn></mml:msub><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>0</mml:mn></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mo>,</mml:mo><mml:mi>…</mml:mi><mml:mo>,</mml:mo><mml:msub><mml:mi>E</mml:mi><mml:mi>j</mml:mi></mml:msub><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>0</mml:mn></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:mrow></mml:math></alternatives></inline-formula>
+    are calculated instead.
+    <styled-content id="figU003A1"></styled-content></p></caption>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="TEMPO_Fig1.png" />
+  </fig>
+</sec>
+<sec id="usage">
+  <title>Usage</title>
+  <p>There are five main classes that make up a simulation in TEMPO:
+  <monospace>Pulse_Recipe</monospace>, <monospace>Pulse</monospace>,
+  <monospace>Hamiltonian</monospace>,
+  <monospace>Pulse_Sequence</monospace>, and
+  <monospace>Evolver</monospace>. In general, simulations can be easily
+  executed by following the steps outlined below, which are illustrated
+  in <xref alt="[fig:1]" rid="figU003A1">[fig:1]</xref>.</p>
+  <list list-type="order">
+    <list-item>
+      <p>Create a pulse recipe by defining the functional form of the
+      time-dependent Hamiltonian <disp-formula><alternatives>
+      <tex-math><![CDATA[\hat H_i(t) = \hat O_i \cdot f_i(\mathbf{x},  t).]]></tex-math>
+      <mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mover><mml:mi>H</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mi>i</mml:mi></mml:msub><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>t</mml:mi><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mo>=</mml:mo><mml:msub><mml:mover><mml:mi>O</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mi>i</mml:mi></mml:msub><mml:mo>⋅</mml:mo><mml:msub><mml:mi>f</mml:mi><mml:mi>i</mml:mi></mml:msub><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐱</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mi>.</mml:mi></mml:mrow></mml:math></alternatives></disp-formula>
+      The user provides an operator/matrix
+      <inline-formula><alternatives>
+      <tex-math><![CDATA[\hat O]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mover><mml:mi>O</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover></mml:math></alternatives></inline-formula>
+      and scalar function <inline-formula><alternatives>
+      <tex-math><![CDATA[f(\mathbf{x}, t)]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>f</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>𝐱</mml:mi><mml:mo>,</mml:mo><mml:mi>t</mml:mi><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:mrow></mml:math></alternatives></inline-formula>
+      that depends on input parameters <inline-formula><alternatives>
+      <tex-math><![CDATA[\mathbf{x}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>𝐱</mml:mi></mml:math></alternatives></inline-formula>
+      and time <inline-formula><alternatives>
+      <tex-math><![CDATA[t]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>t</mml:mi></mml:math></alternatives></inline-formula>.</p>
+    </list-item>
+    <list-item>
+      <p>Create individual pulse(s) <inline-formula><alternatives>
+      <tex-math><![CDATA[P_1, \dots, P_n]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>P</mml:mi><mml:mn>1</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:mi>…</mml:mi><mml:mo>,</mml:mo><mml:msub><mml:mi>P</mml:mi><mml:mi>n</mml:mi></mml:msub></mml:mrow></mml:math></alternatives></inline-formula>
+      by providing a pulse recipe, individual parameter settings
+      <inline-formula><alternatives>
+      <tex-math><![CDATA[\mathbf{x_1}, \dots, \mathbf{x_n}]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>𝐱</mml:mi><mml:mn>𝟏</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:mi>…</mml:mi><mml:mo>,</mml:mo><mml:msub><mml:mi>𝐱</mml:mi><mml:mi>𝐧</mml:mi></mml:msub></mml:mrow></mml:math></alternatives></inline-formula>,
+      and pulse timing information.</p>
+    </list-item>
+    <list-item>
+      <p>Generate a pulse sequence by inputting the pulses
+      <inline-formula><alternatives>
+      <tex-math><![CDATA[P_1, \dots, P_n]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>P</mml:mi><mml:mn>1</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:mi>…</mml:mi><mml:mo>,</mml:mo><mml:msub><mml:mi>P</mml:mi><mml:mi>n</mml:mi></mml:msub></mml:mrow></mml:math></alternatives></inline-formula>,
+      and optionally a time-independent (static) Hamiltonian.</p>
+    </list-item>
+    <list-item>
+      <p>To evolve the system in time, the pulse sequence is provided to
+      the Evolver class along with the initial system state
+      <inline-formula><alternatives>
+      <tex-math><![CDATA[\psi(t_0)]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>ψ</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>0</mml:mn></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:mrow></mml:math></alternatives></inline-formula>
+      (state vector or density matrix) and an array of time points
+      <inline-formula><alternatives>
+      <tex-math><![CDATA[t_0, t_1, \dots, t_m]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>t</mml:mi><mml:mn>0</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>1</mml:mn></mml:msub><mml:mo>,</mml:mo><mml:mi>…</mml:mi><mml:mo>,</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mi>m</mml:mi></mml:msub></mml:mrow></mml:math></alternatives></inline-formula>.
+      The system state is returned at these times. It is also possible
+      to provide collapse operators for evolution using the Linbladian
+      (open) master equation, along with operators for calculation of
+      expectation values at these times.</p>
+    </list-item>
+    <list-item>
+      <p>The Evolver returns the system state
+      <inline-formula><alternatives>
+      <tex-math><![CDATA[\psi(t_0), \dots, \psi(t_m)]]></tex-math>
+      <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>ψ</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mn>0</mml:mn></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mo>,</mml:mo><mml:mi>…</mml:mi><mml:mo>,</mml:mo><mml:mi>ψ</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msub><mml:mi>t</mml:mi><mml:mi>m</mml:mi></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:mrow></mml:math></alternatives></inline-formula>
+      or operator expectation values at the times provided.</p>
+    </list-item>
+  </list>
+  <fig>
+    <caption><p>(a) Average simulation wall-clock time
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[T_S]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:msub><mml:mi>T</mml:mi><mml:mi>S</mml:mi></mml:msub></mml:math></alternatives></inline-formula>
+    as a function of pulse sequence duration
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[\tau]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>τ</mml:mi></mml:math></alternatives></inline-formula>
+    without using TEMPO, for number of pulses
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[n=5,10,20,50]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>n</mml:mi><mml:mo>=</mml:mo><mml:mn>5</mml:mn><mml:mo>,</mml:mo><mml:mn>10</mml:mn><mml:mo>,</mml:mo><mml:mn>20</mml:mn><mml:mo>,</mml:mo><mml:mn>50</mml:mn></mml:mrow></mml:math></alternatives></inline-formula>,
+    shown in shades of blue. Average simulation times using TEMPO are
+    shown in red at high pulse number count
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[(n=50)]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>n</mml:mi><mml:mo>=</mml:mo><mml:mn>50</mml:mn><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>.
+    Best-fit curves are displayed as dashed lines, with slope values
+    plotted in (b) for measurements with TEMPO in red and without TEMPO
+    (via QuTiP’s mesolve function) in black. (c) Example visualization
+    of pulse sequence segmentation performed by TEMPO, where
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[n=3]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>n</mml:mi><mml:mo>=</mml:mo><mml:mn>3</mml:mn></mml:mrow></mml:math></alternatives></inline-formula>
+    pulses result in <inline-formula><alternatives>
+    <tex-math><![CDATA[2n-1=5]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mn>2</mml:mn><mml:mi>n</mml:mi><mml:mo>−</mml:mo><mml:mn>1</mml:mn><mml:mo>=</mml:mo><mml:mn>5</mml:mn></mml:mrow></mml:math></alternatives></inline-formula>
+    time segments for solver evaluation. All measurements of
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[T_S]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:msub><mml:mi>T</mml:mi><mml:mi>S</mml:mi></mml:msub></mml:math></alternatives></inline-formula>
+    are average values over 20 repeated runs.
+    <styled-content id="figU003A2"></styled-content></p></caption>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="TEMPO_Fig2.png" />
+  </fig>
+  <sec id="efficient-simulation-times">
+    <title><bold>Efficient Simulation Times</bold>:</title>
+    <p>Using the existing master equation solvers available in QuTiP,
+    TEMPO provides significant speedups in simulations of multi-pulse
+    sequences. Without TEMPO, the simulation (wall-clock) time
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[T_S]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:msub><mml:mi>T</mml:mi><mml:mi>S</mml:mi></mml:msub></mml:math></alternatives></inline-formula>
+    generally follow a linear trend with respect to 1) the total
+    duration of a pulse sequence <inline-formula><alternatives>
+    <tex-math><![CDATA[\tau]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>τ</mml:mi></mml:math></alternatives></inline-formula>,
+    and 2) the number of pulses <inline-formula><alternatives>
+    <tex-math><![CDATA[n]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>n</mml:mi></mml:math></alternatives></inline-formula>,
+    roughly obeying <disp-formula><alternatives>
+    <tex-math><![CDATA[T_S \propto n \cdot \tau.]]></tex-math>
+    <mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>T</mml:mi><mml:mi>S</mml:mi></mml:msub><mml:mo>∝</mml:mo><mml:mi>n</mml:mi><mml:mo>⋅</mml:mo><mml:mi>τ</mml:mi><mml:mi>.</mml:mi></mml:mrow></mml:math></alternatives></disp-formula>
+    This dependence is highlighted in
+    <xref alt="[fig:2]" rid="figU003A2">[fig:2]</xref>(a), which shows
+    measurements of the average simulation time with varying
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[\tau]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>τ</mml:mi></mml:math></alternatives></inline-formula>.
+    Each set of measurements, shown as points of the same color, is
+    performed for a fixed number of pulses
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[n]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>n</mml:mi></mml:math></alternatives></inline-formula>.
+    Without TEMPO (shades of blue), the fitted slope for each set of
+    measurements increases with <inline-formula><alternatives>
+    <tex-math><![CDATA[n]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>n</mml:mi></mml:math></alternatives></inline-formula>,
+    exhibiting a linear dependence as shown in
+    <xref alt="[fig:2]" rid="figU003A2">[fig:2]</xref>(b). In contrast,
+    the use of TEMPO (red) results in simulation times that are nearly
+    independent of the number of pulses <inline-formula><alternatives>
+    <tex-math><![CDATA[n]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>n</mml:mi></mml:math></alternatives></inline-formula>,
+    instead following <inline-formula><alternatives>
+    <tex-math><![CDATA[T_S \propto \tau]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>T</mml:mi><mml:mi>S</mml:mi></mml:msub><mml:mo>∝</mml:mo><mml:mi>τ</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>.
+    As a result, the slope of each best-fit line using TEMPO stays
+    roughly constant with respect to <inline-formula><alternatives>
+    <tex-math><![CDATA[n]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>n</mml:mi></mml:math></alternatives></inline-formula>,
+    as shown in
+    <xref alt="[fig:2]" rid="figU003A2">[fig:2]</xref>(b).</p>
+    <p>This advantage can be understood by considering how the solvers
+    are constructed natively (without TEMPO). At each timestep during
+    the pulse sequence, the solver typically inspects if each pulse is
+    active at this time. This results in <inline-formula><alternatives>
+    <tex-math><![CDATA[n]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>n</mml:mi></mml:math></alternatives></inline-formula>
+    checks at each timestep and thus the rough linear dependence of
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[T_S]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:msub><mml:mi>T</mml:mi><mml:mi>S</mml:mi></mml:msub></mml:math></alternatives></inline-formula>
+    with respect to <inline-formula><alternatives>
+    <tex-math><![CDATA[n]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>n</mml:mi></mml:math></alternatives></inline-formula>.</p>
+    <p>Instead, TEMPO first divides the pulse sequence into consecutive
+    time segments for efficient time evolution, illustrated by an
+    example in <xref alt="[fig:2]" rid="figU003A2">[fig:2]</xref>(c). By
+    creating segment breaks at the start and end of each pulse, TEMPO
+    preserves only the active pulses in each of the
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[2n-1]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mn>2</mml:mn><mml:mi>n</mml:mi><mml:mo>−</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:math></alternatives></inline-formula>
+    segments. The solver is then executed consecutively across each
+    segment, without any redundant checks of inactive pulses. As a
+    result, simulation times are largely independent of
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[n]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>n</mml:mi></mml:math></alternatives></inline-formula>,
+    besides minor overheads from repeated use of the solver.</p>
+  </sec>
+</sec>
+<sec id="acknowledgements">
+  <title>Acknowledgements</title>
+  <p>We thank Saipriya Satyajit, Katrijn Everaert, Declan Daly, Kevin
+  Olsson and John Blanchard for testing the package and providing
+  feedback during development. This work is supported by, or in part by,
+  the DEVCOM Army Research Laboratory under Contract Numbers
+  W911NF1920181 and W911NF2420143; the DEVCOM ARL Army Research Office
+  under Grant Number W911NF2120110; the U.S. Air Force Office of
+  Scientific Research under Grant Number FA95502210312; and the
+  University of Maryland Quantum Technology Center.</p>
+</sec>
+</body>
+<back>
+<ref-list>
+  <title></title>
+  <ref id="ref-Johansson2012">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Johansson</surname><given-names>J. R.</given-names></name>
+        <name><surname>Nation</surname><given-names>P. D.</given-names></name>
+        <name><surname>Nori</surname><given-names>Franco</given-names></name>
+      </person-group>
+      <article-title>QuTiP: An open-source python framework for the dynamics of open quantum systems</article-title>
+      <source>Computer Physics Communications</source>
+      <publisher-name>Elsevier BV</publisher-name>
+      <year iso-8601-date="2012-08">2012</year><month>08</month>
+      <volume>183</volume>
+      <issue>8</issue>
+      <issn>0010-4655</issn>
+      <uri>http://dx.doi.org/10.1016/j.cpc.2012.02.021</uri>
+      <pub-id pub-id-type="doi">10.1016/j.cpc.2012.02.021</pub-id>
+      <fpage>1760</fpage>
+      <lpage>1772</lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-Johansson2013">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Johansson</surname><given-names>J. R.</given-names></name>
+        <name><surname>Nation</surname><given-names>P. D.</given-names></name>
+        <name><surname>Nori</surname><given-names>Franco</given-names></name>
+      </person-group>
+      <article-title>QuTiP 2: A python framework for the dynamics of open quantum systems</article-title>
+      <source>Computer Physics Communications</source>
+      <publisher-name>Elsevier BV</publisher-name>
+      <year iso-8601-date="2013-04">2013</year><month>04</month>
+      <volume>184</volume>
+      <issue>4</issue>
+      <issn>0010-4655</issn>
+      <uri>http://dx.doi.org/10.1016/j.cpc.2012.11.019</uri>
+      <pub-id pub-id-type="doi">10.1016/j.cpc.2012.11.019</pub-id>
+      <fpage>1234</fpage>
+      <lpage>1240</lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-Levitt2013">
+    <element-citation>
+      <person-group person-group-type="author">
+        <name><surname>Levitt</surname><given-names>Malcolm H</given-names></name>
+      </person-group>
+      <article-title>Spin dynamics</article-title>
+      <publisher-name>John Wiley &amp; Sons</publisher-name>
+      <publisher-loc>Nashville, TN</publisher-loc>
+      <year iso-8601-date="2013-05">2013</year><month>05</month>
+      <edition>2</edition>
+    </element-citation>
+  </ref>
+  <ref id="ref-Vitanov2001">
+    <element-citation>
+      <person-group person-group-type="author">
+        <name><surname>Vitanov</surname><given-names>N. V.</given-names></name>
+        <name><surname>Fleischhauer</surname><given-names>M.</given-names></name>
+        <name><surname>Shore</surname><given-names>B. W.</given-names></name>
+        <name><surname>Bergmann</surname><given-names>K.</given-names></name>
+      </person-group>
+      <article-title>Coherent manipulation of atoms molecules by sequential laser pulses</article-title>
+      <publisher-name>Elsevier</publisher-name>
+      <year iso-8601-date="2001">2001</year>
+      <isbn>9780120038466</isbn>
+      <issn>1049-250X</issn>
+      <uri>http://dx.doi.org/10.1016/S1049-250X(01)80063-X</uri>
+      <pub-id pub-id-type="doi">10.1016/s1049-250x(01)80063-x</pub-id>
+      <fpage>55</fpage>
+      <lpage>190</lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-Fingerhuth2018">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Fingerhuth</surname><given-names>Mark</given-names></name>
+        <name><surname>Babej</surname><given-names>Tomáš</given-names></name>
+        <name><surname>Wittek</surname><given-names>Peter</given-names></name>
+      </person-group>
+      <article-title>Open source software in quantum computing</article-title>
+      <source>PLOS ONE</source>
+      <person-group person-group-type="editor">
+        <name><surname>Mueck</surname><given-names>Leonie Anna</given-names></name>
+      </person-group>
+      <publisher-name>Public Library of Science (PLoS)</publisher-name>
+      <year iso-8601-date="2018-12">2018</year><month>12</month>
+      <volume>13</volume>
+      <issue>12</issue>
+      <issn>1932-6203</issn>
+      <uri>http://dx.doi.org/10.1371/journal.pone.0208561</uri>
+      <pub-id pub-id-type="doi">10.1371/journal.pone.0208561</pub-id>
+      <fpage>e0208561</fpage>
+      <lpage></lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-Barry2020">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Barry</surname><given-names>John F.</given-names></name>
+        <name><surname>Schloss</surname><given-names>Jennifer M.</given-names></name>
+        <name><surname>Bauch</surname><given-names>Erik</given-names></name>
+        <name><surname>Turner</surname><given-names>Matthew J.</given-names></name>
+        <name><surname>Hart</surname><given-names>Connor A.</given-names></name>
+        <name><surname>Pham</surname><given-names>Linh M.</given-names></name>
+        <name><surname>Walsworth</surname><given-names>Ronald L.</given-names></name>
+      </person-group>
+      <article-title>Sensitivity optimization for NV-diamond magnetometry</article-title>
+      <source>Reviews of Modern Physics</source>
+      <publisher-name>American Physical Society (APS)</publisher-name>
+      <year iso-8601-date="2020-03">2020</year><month>03</month>
+      <volume>92</volume>
+      <issue>1</issue>
+      <issn>1539-0756</issn>
+      <uri>http://dx.doi.org/10.1103/RevModPhys.92.015004</uri>
+      <pub-id pub-id-type="doi">10.1103/revmodphys.92.015004</pub-id>
+    </element-citation>
+  </ref>
+</ref-list>
+</back>
+</article>
