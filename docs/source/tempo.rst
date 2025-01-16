@@ -25,5 +25,3 @@ TEMPO
    :members:
    :undoc-members:
    :show-inheritance:
-
-misc
