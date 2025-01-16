@@ -24,13 +24,8 @@ Installation can be done with conda. First, ensure you have setup conda, then fo
 
 ::
 
-    This text is in a code block. Sphinx will use generic
-    text highlighting.
+    conda config --append channels conda-forge
 
-
-``
-conda config --append channels conda-forge
-``
 
 2. Build an environment with conda. Make sure you are in the root folder of this project. Your python version should be 
 version 3, python 2 is not supported. 
