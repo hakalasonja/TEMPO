@@ -22,6 +22,12 @@ Installation can be done with conda. First, ensure you have setup conda, then fo
 
 1. Run the following to ensure all packages can be discovered. 
 
+::
+
+    This text is in a code block. Sphinx will use generic
+    text highlighting.
+
+
 ``
 conda config --append channels conda-forge
 ``
