@@ -52,5 +52,6 @@ html_sidebars = {
         "relations.html",
         "sourcelink.html",
         "home.html",
+        "index.html"
     ]
 }
