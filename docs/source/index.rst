@@ -61,6 +61,7 @@ TEMPO Library
    :maxdepth: 2
    :caption: Contents:
 
+   index
    tempo
    misc
 
