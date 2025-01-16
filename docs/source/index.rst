@@ -31,11 +31,12 @@ Installation can be done with conda. First, ensure you have setup conda, then fo
 version 3, python 2 is not supported. 
 Please ensure that the python version is compatible with the packages **numpy** and **qutip**, and that **multiprocessing** is supported. 
 
-``
-conda create --name YOUR_ENV_NAME python=3.**.**
-conda activate YOUR_ENV_NAME
-pip install -r requirements.txt
-``
+::
+
+    conda create --name YOUR_ENV_NAME python=3.**.**
+    conda activate YOUR_ENV_NAME
+    pip install -r requirements.txt
+
 
 The *requirements_docs.txt* file provides more specific packages to aid in testing and building when the library is deployed to github. 
 While you are welcome to use this for installation be aware that the most streamlined installation process uses the standard *requirements.txt* file instead.
