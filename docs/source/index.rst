@@ -29,6 +29,7 @@ conda config --append channels conda-forge
 2. Build an environment with conda. Make sure you are in the root folder of this project. Your python version should be 
 version 3, python 2 is not supported. 
 Please ensure that the python version is compatible with the packages **numpy** and **qutip**, and that **multiprocessing** is supported. 
+
 ```
 conda create --name YOUR_ENV_NAME python=3.**.**
 conda activate YOUR_ENV_NAME
