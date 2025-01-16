@@ -61,7 +61,6 @@ TEMPO Library
    :maxdepth: 2
    :caption: Contents:
 
-   genindex
    tempo
    misc
 

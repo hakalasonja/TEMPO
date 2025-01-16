@@ -45,3 +45,8 @@ sys.path.insert(0, os.path.abspath('../../'))
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
+html_theme_options = {
+  "external_links": [
+      {"name": "Home", "url": "https://tempo-documentation.readthedocs.io/en/latest/index.html"},
+  ]
+}
