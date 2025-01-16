@@ -9,32 +9,11 @@ ______________________   _____ __________________
                    \/         \/                 \/                                   
   </pre>
 
-  <p align="center">
-    <br />
-    <a href="https://tempo-documentation.readthedocs.io/en/latest/"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/username/tempo">View Demo</a>
-    ·
-    <a href="https://github.com/username/tempo/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/username/tempo/issues">Request Feature</a>
-  </p>
-</p>
 
 <!-- Badges -->
 <p align="center">
   <a href="https://github.com/georgew79/tempo/actions/workflows/test.yml">
     <img src="https://github.com/georgew79/tempo/actions/workflows/test.yml/badge.svg" alt="Build Status">
-  </a>
-  <a href="https://github.com/username/tempo/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/username/tempo.svg" alt="License">
-  </a>
-  <a href="https://github.com/username/tempo/releases">
-    <img src="https://img.shields.io/github/v/release/username/tempo.svg" alt="Release">
-  </a>
-  <a href="https://github.com/username/tempo/stargazers">
-    <img src="https://img.shields.io/github/stars/username/tempo.svg" alt="Stars">
   </a>
 </p>
 
