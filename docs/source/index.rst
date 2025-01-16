@@ -47,7 +47,7 @@ If you do not use conda, other installation approaches can work as long as you h
 Using the Docs
 ==================
 
-The documentation page includes all primary modules of the library under the tab **TEMPO**. This includes the classes *Pulse*, *Pulse_recipe*, *Pulse_sequenc*, *Hamiltonian*, and *Evolver*. Classes for exception handling and other miscellaneous operations are under **Utilities**. Please click on any of these modules for more details.
+The documentation page includes all primary modules of the library under the tab **TEMPO**. This includes the classes *Pulse*, *Pulse_recipe*, *Pulse_sequence*, *Hamiltonian*, and *Evolver*. Classes for exception handling and other miscellaneous operations are under **Utilities**. Please click on any of these modules for more details.
 You may also use the available search feature in the top left of the page, or the bottom of this one. 
 
 TEMPO Library 
