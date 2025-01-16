@@ -7,7 +7,6 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'TEMPO'
-copyright = '2024, Jner Tzern Oon, Sonja Hakala, George Witt, Ronald Walsworth'
 author = 'Jner Tzern Oon, Sonja Hakala, George Witt, Ronald Walsworth'
 release = '0.1'
 
