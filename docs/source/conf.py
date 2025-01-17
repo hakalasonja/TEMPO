@@ -8,6 +8,7 @@
 
 project = 'TEMPO'
 author = 'Jner Tzern Oon, Sonja Hakala, George Witt, Ronald Walsworth'
+copyright = '2024, Jner Tzern Oon, Sonja Hakala, George Witt, Ronald Walsworth'
 release = '0.1'
 
 # -- General configuration ---------------------------------------------------
