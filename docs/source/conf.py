@@ -31,8 +31,9 @@ source_suffix = {
     '.rst': 'restructuredtext',
     '.md': 'markdown',
 }
+
 # Set the theme to Read the Docs theme (installed via pip)
-html_theme = 'sphinx_rtd_theme'
+#html_theme = 'sphinx_rtd_theme'
 
 import os
 import sys
