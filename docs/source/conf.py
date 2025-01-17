@@ -33,7 +33,7 @@ source_suffix = {
 }
 
 # Set the theme to Read the Docs theme (installed via pip)
-#html_theme = 'sphinx_rtd_theme'
+html_theme = 'sphinx_rtd_theme'
 html_style = 'custom.css'
 
 import os
