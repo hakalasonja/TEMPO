@@ -682,6 +682,9 @@ class Evolver():
     
     @property
     def state_init(self):
+        """
+        :meta private:
+        """
         return self._state_init
     
     @state_init.setter
