@@ -18,20 +18,6 @@ ______________________   _____ __________________
 </p>
 
 
-
-<!-- Table of Contents -->
-## Table of Contents
-
-- [About TEMPO](#about-tempo)
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Examples](#examples)
-- [Documentation](#documentation)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
-
 # Summary
 
 TEMPO (Time-dependent Evolution of Multiple Pulse Operations) offers accessible and efficient simulations of pulse sequences in Python, using the suite of master equation solvers available in the Quantum Toolbox in Python (QuTiP). 
