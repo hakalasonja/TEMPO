@@ -2,12 +2,6 @@
 @import url("sphinx_rtd_theme.css");
 /*@import 'theme.css';       /* for the Read the Docs theme */
 
-
-
-body {
-
-    dl.py.property {
+dl.py.property {
     display: block !important;
     }
-
-}
