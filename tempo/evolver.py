@@ -682,7 +682,9 @@ class Evolver():
     def state_init(self):
         """
         Hide on documentation page
+        
         :meta private:
+
         """
         return self._state_init
     
@@ -698,7 +700,9 @@ class Evolver():
     def tlist(self):
         """
         Hide on documentation page
+        
         :meta private:
+
         """
         return self._tlist
     
@@ -714,7 +718,9 @@ class Evolver():
     def pulse_seq(self):
         """
         Hide on documentation page
+        
         :meta private:
+
         """
         return self._pulse_seq
     
@@ -733,7 +739,9 @@ class Evolver():
     def Hstat(self):
         """
         Hide on documentation page
+        
         :meta private:
+
         """
         return self._Hstat
     
@@ -756,7 +764,9 @@ class Evolver():
     def c_ops(self):
         """
         Hide on documentation page
+        
         :meta private:
+
         """        
         return self._c_ops
     
@@ -772,7 +782,9 @@ class Evolver():
     def e_ops(self):
         """
         Hide on documentation page
+        
         :meta private:
+
         """
         return self._e_ops
     
@@ -788,7 +800,9 @@ class Evolver():
     def opts(self):
         """
         Hide on documentation page
+        
         :meta private:
+
         """
         return self._opts
 
