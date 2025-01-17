@@ -32,13 +32,12 @@ source_suffix = {
     '.md': 'markdown',
 }
 
+html_static_path = ['_static']
+
 # Set the theme to Read the Docs theme (installed via pip)
 html_theme = 'sphinx_rtd_theme'
-html_style = 'custom.css'
+html_style = 'css/custom.css'
 
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../../'))
-
-
-html_static_path = ['_static']
