@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doi_batch xmlns="http://www.crossref.org/schema/5.3.1"
+           xmlns:ai="http://www.crossref.org/AccessIndicators.xsd"
+           xmlns:rel="http://www.crossref.org/relations.xsd"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           version="5.3.1"
+           xsi:schemaLocation="http://www.crossref.org/schema/5.3.1 http://www.crossref.org/schemas/crossref5.3.1.xsd">
+  <head>
+    <doi_batch_id>20250113135532-a80a2b7d723e464491fedc004bbff09356288226</doi_batch_id>
+    <timestamp>20250113135532</timestamp>
+    <depositor>
+      <depositor_name>JOSS Admin</depositor_name>
+      <email_address>admin@theoj.org</email_address>
+    </depositor>
+    <registrant>The Open Journal</registrant>
+  </head>
+  <body>
+    <journal>
+      <journal_metadata>
+        <full_title>Journal of Open Source Software</full_title>
+        <abbrev_title>JOSS</abbrev_title>
+        <issn media_type="electronic">2475-9066</issn>
+        <doi_data>
+          <doi>10.21105/joss</doi>
+          <resource>https://joss.theoj.org</resource>
+        </doi_data>
+      </journal_metadata>
+      <journal_issue>
+        <publication_date media_type="online">
+          <month>01</month>
+          <year>1970</year>
+        </publication_date>
+        <journal_volume>
+          <volume>¿VOL?</volume>
+        </journal_volume>
+        <issue>¿ISSUE?</issue>
+      </journal_issue>
+      <journal_article publication_type="full_text">
+        <titles>
+          <title>TEMPO: A Python Package for Time Evolution of Pulse Sequences in QuTiP</title>
+        </titles>
+        <contributors>
+          <person_name sequence="first" contributor_role="author">
+            <given_name>Jner Tzern</given_name>
+            <surname>Oon</surname>
+            <affiliations>
+              <institution><institution_name>Department of Physics, University of Maryland, College Park, Maryland 20742, USA</institution_name></institution>
+              <institution><institution_name>Quantum Technology Center, University of Maryland, College Park, Maryland 20742, USA</institution_name></institution>
+            </affiliations>
+            <ORCID>https://orcid.org/0000-0002-5716-5653</ORCID>
+          </person_name>
+          <person_name sequence="additional"
+                       contributor_role="author">
+            <given_name>Sonja A.</given_name>
+            <surname>Hakala</surname>
+            <affiliations>
+              <institution><institution_name>Department of Physics, University of Maryland, College Park, Maryland 20742, USA</institution_name></institution>
+            </affiliations>
+          </person_name>
+          <person_name sequence="additional"
+                       contributor_role="author">
+            <given_name>George A.</given_name>
+            <surname>Witt</surname>
+            <affiliations>
+              <institution><institution_name>Department of Physics, University of Maryland, College Park, Maryland 20742, USA</institution_name></institution>
+            </affiliations>
+          </person_name>
+          <person_name sequence="additional"
+                       contributor_role="author">
+            <given_name>Ronald</given_name>
+            <surname>Walsworth</surname>
+            <affiliations>
+              <institution><institution_name>Department of Physics, University of Maryland, College Park, Maryland 20742, USA</institution_name></institution>
+              <institution><institution_name>Quantum Technology Center, University of Maryland, College Park, Maryland 20742, USA</institution_name></institution>
+              <institution><institution_name>Department of Electrical and Computer Engineering, University of Maryland, College Park, Maryland 20742, USA</institution_name></institution>
+            </affiliations>
+          </person_name>
+        </contributors>
+        <publication_date>
+          <month>01</month>
+          <day>01</day>
+          <year>1970</year>
+        </publication_date>
+        <pages>
+          <first_page>¿PAGE?</first_page>
+        </pages>
+        <publisher_item>
+          <identifier id_type="doi">N/A</identifier>
+        </publisher_item>
+        <ai:program name="AccessIndicators">
+          <ai:license_ref applies_to="vor">http://creativecommons.org/licenses/by/4.0/</ai:license_ref>
+          <ai:license_ref applies_to="am">http://creativecommons.org/licenses/by/4.0/</ai:license_ref>
+          <ai:license_ref applies_to="tdm">http://creativecommons.org/licenses/by/4.0/</ai:license_ref>
+        </ai:program>
+        <rel:program>
+          <rel:related_item>
+            <rel:description>Software archive</rel:description>
+            <rel:inter_work_relation relationship-type="references" identifier-type="doi">10.5281</rel:inter_work_relation>
+          </rel:related_item>
+          <rel:related_item>
+            <rel:description>GitHub review issue</rel:description>
+            <rel:inter_work_relation relationship-type="hasReview" identifier-type="uri">https://github.com/openjournals</rel:inter_work_relation>
+          </rel:related_item>
+        </rel:program>
+        <doi_data>
+          <doi>N/A</doi>
+          <resource>https://joss.theoj.org/papers/N/A</resource>
+          <collection property="text-mining">
+            <item>
+              <resource mime_type="application/pdf">https://joss.theoj.org/papers/N/A.pdf</resource>
+            </item>
+          </collection>
+        </doi_data>
+        <citation_list>
+          <citation key="Johansson2012">
+            <article_title>QuTiP: An open-source python framework for the dynamics of open quantum systems</article_title>
+            <author>Johansson</author>
+            <journal_title>Computer Physics Communications</journal_title>
+            <issue>8</issue>
+            <volume>183</volume>
+            <doi>10.1016/j.cpc.2012.02.021</doi>
+            <issn>0010-4655</issn>
+            <cYear>2012</cYear>
+            <unstructured_citation>Johansson, J. R., Nation, P. D., &amp; Nori, F. (2012). QuTiP: An open-source python framework for the dynamics of open quantum systems. Computer Physics Communications, 183(8), 1760–1772. https://doi.org/10.1016/j.cpc.2012.02.021</unstructured_citation>
+          </citation>
+          <citation key="Johansson2013">
+            <article_title>QuTiP 2: A python framework for the dynamics of open quantum systems</article_title>
+            <author>Johansson</author>
+            <journal_title>Computer Physics Communications</journal_title>
+            <issue>4</issue>
+            <volume>184</volume>
+            <doi>10.1016/j.cpc.2012.11.019</doi>
+            <issn>0010-4655</issn>
+            <cYear>2013</cYear>
+            <unstructured_citation>Johansson, J. R., Nation, P. D., &amp; Nori, F. (2013). QuTiP 2: A python framework for the dynamics of open quantum systems. Computer Physics Communications, 184(4), 1234–1240. https://doi.org/10.1016/j.cpc.2012.11.019</unstructured_citation>
+          </citation>
+          <citation key="Levitt2013">
+            <article_title>Spin dynamics</article_title>
+            <author>Levitt</author>
+            <cYear>2013</cYear>
+            <unstructured_citation>Levitt, M. H. (2013). Spin dynamics (2nd ed.). John Wiley &amp; Sons.</unstructured_citation>
+          </citation>
+          <citation key="Vitanov2001">
+            <article_title>Coherent manipulation of atoms molecules by sequential laser pulses</article_title>
+            <author>Vitanov</author>
+            <doi>10.1016/s1049-250x(01)80063-x</doi>
+            <issn>1049-250X</issn>
+            <isbn>9780120038466</isbn>
+            <cYear>2001</cYear>
+            <unstructured_citation>Vitanov, N. V., Fleischhauer, M., Shore, B. W., &amp; Bergmann, K. (2001). Coherent manipulation of atoms molecules by sequential laser pulses (pp. 55–190). Elsevier. https://doi.org/10.1016/s1049-250x(01)80063-x</unstructured_citation>
+          </citation>
+          <citation key="Fingerhuth2018">
+            <article_title>Open source software in quantum computing</article_title>
+            <author>Fingerhuth</author>
+            <journal_title>PLOS ONE</journal_title>
+            <issue>12</issue>
+            <volume>13</volume>
+            <doi>10.1371/journal.pone.0208561</doi>
+            <issn>1932-6203</issn>
+            <cYear>2018</cYear>
+            <unstructured_citation>Fingerhuth, M., Babej, T., &amp; Wittek, P. (2018). Open source software in quantum computing. PLOS ONE, 13(12), e0208561. https://doi.org/10.1371/journal.pone.0208561</unstructured_citation>
+          </citation>
+          <citation key="Barry2020">
+            <article_title>Sensitivity optimization for NV-diamond magnetometry</article_title>
+            <author>Barry</author>
+            <journal_title>Reviews of Modern Physics</journal_title>
+            <issue>1</issue>
+            <volume>92</volume>
+            <doi>10.1103/revmodphys.92.015004</doi>
+            <issn>1539-0756</issn>
+            <cYear>2020</cYear>
+            <unstructured_citation>Barry, J. F., Schloss, J. M., Bauch, E., Turner, M. J., Hart, C. A., Pham, L. M., &amp; Walsworth, R. L. (2020). Sensitivity optimization for NV-diamond magnetometry. Reviews of Modern Physics, 92(1). https://doi.org/10.1103/revmodphys.92.015004</unstructured_citation>
+          </citation>
+        </citation_list>
+      </journal_article>
+    </journal>
+  </body>
+</doi_batch>
