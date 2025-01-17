@@ -1,0 +1,6 @@
+/* Import the Read the Docs theme's default CSS */
+@import 'theme.css';
+
+dl.py.property {
+    display: block !important;
+}

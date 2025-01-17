@@ -43,4 +43,11 @@ sys.path.insert(0, os.path.abspath('../../'))
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = 'sphinx_rtd_theme'
+
+# Ensure that '_static' is included in the list of static paths
 html_static_path = ['_static']
+
+# Specify the custom CSS file to be included
+html_css_files = [
+    'css/custom.css',
+]
