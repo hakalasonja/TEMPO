@@ -87,7 +87,9 @@ class Hamiltonian():
     def ops(self):
         """
         Hide on documentation page
+        
         :meta private:
+
         """
         return self._ops
     
@@ -114,7 +116,9 @@ class Hamiltonian():
     def op_params(self):
         """
         Hide on documentation page
+        
         :meta private:
+
         """
         return self._params
     
@@ -137,7 +141,9 @@ class Hamiltonian():
     def func(self):
         """
         Hide on documentation page
+        
         :meta private:
+
         """
         return self._func
     

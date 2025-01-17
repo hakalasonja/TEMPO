@@ -184,7 +184,9 @@ class Pulse():
     def recipe(self):
         """
         Hide on documentation page
+        
         :meta private:
+
         """
         return self._recipe
     
@@ -203,7 +205,9 @@ class Pulse():
     def start_time(self):
         """
         Hide on documentation page
+        
         :meta private:
+
         """
         return self._start_time
     
@@ -225,7 +229,9 @@ class Pulse():
     def duration(self):
         """
         Hide on documentation page
+        
         :meta private:
+
         """
         return self._duration
     
@@ -249,7 +255,9 @@ class Pulse():
     def end_time(self):
         """
         Hide on documentation page
+        
         :meta private:
+
         """
         return self._end_time
     
@@ -273,7 +281,9 @@ class Pulse():
     def coeff_params(self):
         """
         Hide on documentation page
+        
         :meta private:
+
         """
         return self._coeff_params
 
@@ -299,7 +309,9 @@ class Pulse():
     def ham(self):
         """
         Hide on documentation page
+        
         :meta private:
+
         """
         return self._ham
     

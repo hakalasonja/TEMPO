@@ -105,7 +105,9 @@ class Pulse_recipe():
     def ham(self):
         """
         Hide on documentation page
+        
         :meta private:
+
         """
         return self._ham
     
@@ -128,7 +130,9 @@ class Pulse_recipe():
     def param_keys(self):
         """
         Hide on documentation page
+        
         :meta private:
+
         """
         return self._param_keys
     
@@ -150,7 +154,9 @@ class Pulse_recipe():
     def coeff_func(self):
         """
         Hide on documentation page
+        
         :meta private:
+
         """
         return self._coeff_func
     

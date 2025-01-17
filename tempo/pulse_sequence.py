@@ -131,7 +131,9 @@ class Pulse_sequence():
     def pulses(self):
         """
         Hide on documentation page
+        
         :meta private:
+
         """
         return self._pulses
     
@@ -155,7 +157,9 @@ class Pulse_sequence():
     def Hstat(self):
         """
         Hide on documentation page
+        
         :meta private:
+
         """
         return self._Hstat
     
