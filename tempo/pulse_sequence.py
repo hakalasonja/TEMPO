@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jul 24 20:02:47 2023
-
 Sequence (list) of pulses.
 
 @author: hakalas
@@ -131,6 +129,12 @@ class Pulse_sequence():
      
     @property
     def pulses(self):
+        """
+        Hide on documentation page
+        
+        :meta private:
+
+        """
         return self._pulses
     
     @pulses.setter
@@ -151,6 +155,12 @@ class Pulse_sequence():
     
     @property
     def Hstat(self):
+        """
+        Hide on documentation page
+        
+        :meta private:
+
+        """
         return self._Hstat
     
     @Hstat.setter        

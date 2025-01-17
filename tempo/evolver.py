@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jul 24 20:10:22 2023
-
 Class to implement time-evolution of a state under applied pulses.
 
 @author: hakalas
@@ -682,6 +680,12 @@ class Evolver():
     
     @property
     def state_init(self):
+        """
+        Hide on documentation page
+        
+        :meta private:
+
+        """
         return self._state_init
     
     @state_init.setter
@@ -694,6 +698,12 @@ class Evolver():
         
     @property
     def tlist(self):
+        """
+        Hide on documentation page
+        
+        :meta private:
+
+        """
         return self._tlist
     
     @tlist.setter
@@ -706,6 +716,12 @@ class Evolver():
     
     @property
     def pulse_seq(self):
+        """
+        Hide on documentation page
+        
+        :meta private:
+
+        """
         return self._pulse_seq
     
     @pulse_seq.setter
@@ -721,6 +737,12 @@ class Evolver():
     
     @property
     def Hstat(self):
+        """
+        Hide on documentation page
+        
+        :meta private:
+
+        """
         return self._Hstat
     
     @Hstat.setter
@@ -740,6 +762,12 @@ class Evolver():
     
     @property
     def c_ops(self):
+        """
+        Hide on documentation page
+        
+        :meta private:
+
+        """        
         return self._c_ops
     
     @c_ops.setter
@@ -752,6 +780,12 @@ class Evolver():
     
     @property
     def e_ops(self):
+        """
+        Hide on documentation page
+        
+        :meta private:
+
+        """
         return self._e_ops
     
     @e_ops.setter
@@ -764,6 +798,12 @@ class Evolver():
    
     @property
     def opts(self):
+        """
+        Hide on documentation page
+        
+        :meta private:
+
+        """
         return self._opts
 
     @opts.setter

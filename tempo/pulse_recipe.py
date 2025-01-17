@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jul 10 18:20:45 2023
-
 The Pulse_recipe class to create time-dependent pulse models. 
 
 @author: hakalas
@@ -105,6 +103,12 @@ class Pulse_recipe():
      
     @property
     def ham(self):
+        """
+        Hide on documentation page
+        
+        :meta private:
+
+        """
         return self._ham
     
     @ham.setter
@@ -124,6 +128,12 @@ class Pulse_recipe():
       
     @property
     def param_keys(self):
+        """
+        Hide on documentation page
+        
+        :meta private:
+
+        """
         return self._param_keys
     
     @param_keys.setter
@@ -142,6 +152,12 @@ class Pulse_recipe():
     
     @property
     def coeff_func(self):
+        """
+        Hide on documentation page
+        
+        :meta private:
+
+        """
         return self._coeff_func
     
     @coeff_func.setter   

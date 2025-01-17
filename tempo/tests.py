@@ -1,6 +1,4 @@
 """
-Created on Wed Nov 20
-
 This file includes all test cases for the TEMPO library to be run with pytest.
 
 @author:

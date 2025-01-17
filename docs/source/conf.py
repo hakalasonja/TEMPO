@@ -8,6 +8,7 @@
 
 project = 'TEMPO'
 author = 'Jner Tzern Oon, Sonja Hakala, George Witt, Ronald Walsworth'
+copyright = '2025, Sonja Hakala'
 release = '0.1'
 
 # -- General configuration ---------------------------------------------------
@@ -30,24 +31,14 @@ source_suffix = {
     '.rst': 'restructuredtext',
     '.md': 'markdown',
 }
+
+html_static_path = ['_static']
+
 # Set the theme to Read the Docs theme (installed via pip)
 html_theme = 'sphinx_rtd_theme'
+#html_style = 'css/custom.css'
 
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../../'))
 
-
-
-# -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
-html_theme = 'sphinx_rtd_theme'
-
-# Ensure that '_static' is included in the list of static paths
-html_static_path = ['_static']
-
-# Specify the custom CSS file to be included
-html_css_files = [
-    'css/custom.css',
-]
