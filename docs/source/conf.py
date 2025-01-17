@@ -36,7 +36,7 @@ html_static_path = ['_static']
 
 # Set the theme to Read the Docs theme (installed via pip)
 html_theme = 'sphinx_rtd_theme'
-html_style = 'css/custom.css'
+#html_style = 'css/custom.css'
 
 import os
 import sys
