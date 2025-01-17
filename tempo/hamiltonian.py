@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jul  5 22:01:39 2023
-
 The Hamiltonian class for representing Hamiltonian operators.
 
 @author: hakalas
@@ -87,6 +85,10 @@ class Hamiltonian():
     
     @property
     def ops(self):
+        """
+        Hide on documentation page
+        :meta private:
+        """
         return self._ops
     
     @ops.setter
@@ -110,6 +112,10 @@ class Hamiltonian():
     
     @property
     def op_params(self):
+        """
+        Hide on documentation page
+        :meta private:
+        """
         return self._params
     
     
@@ -129,6 +135,10 @@ class Hamiltonian():
       
     @property
     def func(self):
+        """
+        Hide on documentation page
+        :meta private:
+        """
         return self._func
     
     @func.setter

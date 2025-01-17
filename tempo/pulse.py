@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jul 17 19:43:07 2023
-
 Create time-dependent pulses.
 
 @author: hakalas
@@ -184,6 +182,10 @@ class Pulse():
 
     @property
     def recipe(self):
+        """
+        Hide on documentation page
+        :meta private:
+        """
         return self._recipe
     
     @recipe.setter
@@ -199,6 +201,10 @@ class Pulse():
     
     @property
     def start_time(self):
+        """
+        Hide on documentation page
+        :meta private:
+        """
         return self._start_time
     
     @start_time.setter
@@ -217,6 +223,10 @@ class Pulse():
     
     @property
     def duration(self):
+        """
+        Hide on documentation page
+        :meta private:
+        """
         return self._duration
     
     @duration.setter
@@ -237,6 +247,10 @@ class Pulse():
     
     @property
     def end_time(self):
+        """
+        Hide on documentation page
+        :meta private:
+        """
         return self._end_time
     
     @end_time.setter
@@ -257,6 +271,10 @@ class Pulse():
     
     @property
     def coeff_params(self):
+        """
+        Hide on documentation page
+        :meta private:
+        """
         return self._coeff_params
 
     @coeff_params.setter
@@ -279,6 +297,10 @@ class Pulse():
         
     @property
     def ham(self):
+        """
+        Hide on documentation page
+        :meta private:
+        """
         return self._ham
     
     @ham.setter
