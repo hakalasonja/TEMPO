@@ -1,5 +1,5 @@
 /* This line is theme specific - it includes the base theme CSS */
-@import url("theme.css");
+@import url("sphinx_rtd_theme.css");
 /*@import 'theme.css';       /* for the Read the Docs theme */
 
 dl.py.property {
