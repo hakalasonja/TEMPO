@@ -47,7 +47,7 @@ cd /path/to/
 python -m venv venv1
 source venv1/bin/activate
 ```
-3. iInstall dependencies
+3. Install dependencies
 ```
 pip install -r TEMPO/requirements.txt
 ```
