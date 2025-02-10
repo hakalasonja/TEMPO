@@ -5,4 +5,4 @@ Utilities
    :maxdepth: 2
    :caption: Tutorials:
 
-   notebooks/Example 1
+   notebooks/Tutorial_1_RABI
