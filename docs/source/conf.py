@@ -24,7 +24,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
     'myst_parser',
-    'myst_nb',
+    'nbsphinx',
 ]
 
 # Allow Sphinx to parse Markdown files
