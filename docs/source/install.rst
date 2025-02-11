@@ -4,8 +4,7 @@ Installation
 
 Installation can be done using package manager **pip** and python's virtual environment module **venv**.
 
-1. Navigate to parent directory, if TEMPO is located in `/path/to/TEMPO`
-.. code-block:: bash
+1. Navigate to the parent directory. For example, if **TEMPO** is located in `/path/to/TEMPO`, you can use::
 
     cd /path/to/
 
