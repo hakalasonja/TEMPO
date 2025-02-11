@@ -42,7 +42,7 @@ Installation can be done using package manager **pip** and python's virtual envi
 ```
 cd /path/to/
 ```
-2. Create virtual environment named venv1 in parent directory, then activate the environment
+2. Create a virtual environment (named venv1 in this case), then activate the environment
 ```
 python -m venv venv1
 source venv1/bin/activate

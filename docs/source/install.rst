@@ -5,14 +5,14 @@ Installation can be done using package manager **pip** and python's virtual envi
 
 1. Navigate to the parent directory. For example, if **TEMPO** is located in `/path/to/TEMPO`, you can use::
 
-    cd /path/to/TEMPO
+    cd /path/to/
 
-2. Create virtual environment named venv1 in parent directory, then activate the environment::
+2. Create a virtual environment (named venv1 in this case), then activate the environment.::
 
     python -m venv venv1
     source venv1/bin/activate
 
-3. Install dependencies::
+3. Install dependencies.::
     
     pip install -r TEMPO/requirements.txt
     
