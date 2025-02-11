@@ -18,6 +18,8 @@ It enables straightforward definition of pulse sequence structures, including an
 Installation
 ==================
 
+TEST
+
 Installation can be done with conda. First, ensure you have setup conda, then follow this tutorial.
 
 1. Run the following to ensure all packages can be discovered. 
