@@ -5,7 +5,7 @@ Installation can be done using package manager **pip** and python's virtual envi
 
 1. Navigate to the parent directory. For example, if **TEMPO** is located in `/path/to/TEMPO`, you can use::
 
-    cd /path/to/
+    cd /path/to/TEMPO
 
 2. Create virtual environment named venv1 in parent directory, then activate the environment::
 
