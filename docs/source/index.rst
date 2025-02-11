@@ -61,6 +61,8 @@ TEMPO Library
 
    tempo
    misc
+   install
+   tutorials
 
 Indices and tables
 ==================
