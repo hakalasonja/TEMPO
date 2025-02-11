@@ -12,23 +12,11 @@ ______________________   _____ __________________
 
 <!-- Badges -->
 <p align="center">
-  <a href="https://github.com/georgew79/tempo/actions/workflows/test.yml">
-    <img src="https://github.com/georgew79/tempo/actions/workflows/test.yml/badge.svg" alt="Build Status">
+  <a href="https://github.com/hakalasonja/tempo/actions/workflows/test.yml">
+    <img src="https://github.com/hakalasonja/tempo/actions/workflows/test.yml/badge.svg" alt="Build Status">
   </a>
 </p>
 
-<!-- Table of Contents -->
-## Table of Contents
-
-- [About TEMPO](#about-tempo)
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Examples](#examples)
-- [Documentation](#documentation)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
 
 # Summary
 
@@ -48,21 +36,37 @@ This avoids overheads incurred by repeated inspections of inactive pulse(s), sig
 
 ## Installation
 
-Installation can be done quickly and easily with conda. First, ensure you have setup conda, then follow this tutorial.
+Installation can be done using package manager **pip** and python's virtual environment module **venv**.
 
-1. Run the following to ensure all packages can be discovered. 
+1. Navigate to parent directory, if TEMPO is located in `/path/to/TEMPO`
+```
+cd /path/to/
+```
+2. Create virtual environment named venv1 in parent directory, then activate the environment
+```
+python -m venv venv1
+source venv1/bin/activate
+```
+3. Install dependencies
+```
+pip install -r TEMPO/requirements.txt
+```
+4. (Optional) If using Jupyter notebook examples found in `/path/to/TEMPO/examples`, create kernel for notebook use:
+```
+ipython kernel install --user --name=venv1
+```
 
+
+Other environment managers can also be used. See below for installation steps using conda.
+1. Run the following to ensure all required packages can be discovered. 
 ```
 conda config --append channels conda-forge
 ```
-
-2. Then build an environment with conda. Make sure you are in the root folder of this project. Your python version should be 
-version 3, python2 is not supported. Any version should work assuming that the subsequent version is compatible with your installed
-version of numpy and qutip, and multiprocessing is supported. 
-
+2. Build an environment with conda. Make sure you are in the root folder of this project. 
 ```
 conda create --name YOUR_ENV_NAME python=3.**.**
 conda activate YOUR_ENV_NAME
 pip install -r requirements.txt
 ```
-
+Your python version should be version 3, python2 is not supported. 
+Any version should work assuming that the subsequent version is compatible with your installed version of numpy and qutip, and multiprocessing is supported. 
