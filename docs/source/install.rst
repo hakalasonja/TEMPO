@@ -21,15 +21,15 @@ Installation can be done using package manager **pip** and python's virtual envi
     ipython kernel install --user --name=venv1
 
 
+Tests
+============
 
-Unit tests can be performed using the `pytest <https://docs.pytest.org/en/stable/>`_ package.
+After installation, unit tests can be performed using the `pytest <https://docs.pytest.org/en/stable/>`_ package.
 
 1. Install pytest::
     pip install pytest
 
-2. Navigate to root directory
-
 3. Run the following::
-    pytest tempo/tests.py
+    pytest /path/to/TEMPO/tempo/tests.py
 
 
