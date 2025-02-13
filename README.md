@@ -36,18 +36,18 @@ This avoids overheads incurred by repeated inspections of inactive pulse(s), sig
 
 ## Installation
 
-Installation can be done using package manager **pip** and python's virtual environment module **venv**.
 
-1. Navigate to parent directory, if TEMPO is located in `/path/to/TEMPO`
-```
-cd /path/to/
-```
-2. Create a virtual environment (named venv1 in this case), then activate the environment
+Installation can be done using package manager [pip](https://pip.pypa.io/en/stable/) and python's virtual environment module [venv](https://docs.python.org/3/library/venv.html).
+
+
+1. Note the directory where **TEMPO** can be found. For this guide, it is located in ``/path/to/TEMPO``.
+
+2. Create a virtual environment (named venv1 here), then activate the environment:
 ```
 python -m venv venv1
 source venv1/bin/activate
 ```
-3. Install dependencies
+3. Install dependencies:
 ```
 pip install -r TEMPO/requirements.txt
 ```
@@ -57,16 +57,33 @@ ipython kernel install --user --name=venv1
 ```
 
 
-Other environment managers can also be used. See below for installation steps using conda.
+Alternatively, other environment & package managers can also be used. See below for installation steps using conda.
+
 1. Run the following to ensure all required packages can be discovered. 
 ```
 conda config --append channels conda-forge
 ```
-2. Build an environment with conda. Make sure you are in the root folder of this project. 
+2. Build an environment with conda, and install packages.
 ```
 conda create --name YOUR_ENV_NAME python=3.**.**
 conda activate YOUR_ENV_NAME
-pip install -r requirements.txt
+conda install --file /path/to/TEMPO/requirements.txt
 ```
 Your python version should be version 3, python2 is not supported. 
-Any version should work assuming that the subsequent version is compatible with your installed version of numpy and qutip, and multiprocessing is supported. 
+
+
+
+## Tests
+============
+
+After installation, unit tests can be performed using the [pytest](<https://docs.pytest.org/en/stable/) package.
+
+1. Install pytest::
+
+    pip install pytest
+
+2. Run tests::
+
+    pytest /path/to/TEMPO/tempo/tests.py
+
+

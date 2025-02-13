@@ -20,6 +20,22 @@ Installation can be done using package manager `pip <https://pip.pypa.io/en/stab
     ipython kernel install --user --name=venv1
 
 
+Alternatively, other environment & package managers can also be used. See below for installation steps using `conda <https://docs.conda.io/projects/conda/en/latest/user-guide/>`_.
+
+1. Run the following to ensure all required packages can be discovered::
+    
+    conda config --append channels conda-forge
+
+2. Build an environment with conda, and install packages::
+
+    conda create --name YOUR_ENV_NAME python=3.**.**
+    conda activate YOUR_ENV_NAME
+    conda install --file /path/to/TEMPO/requirements.txt
+
+Your python version should be version 3, python2 is not supported. 
+
+
+
 Tests
 ============
 
