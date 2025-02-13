@@ -77,12 +77,16 @@ Your python version should be version 3, python2 is not supported.
 
 After installation, unit tests can be performed using the [pytest](https://docs.pytest.org/en/stable/) package.
 
-1. Install pytest::
+1. Install pytest:
+```
+pip install pytest
+```
 
-    pip install pytest
+2. Run tests:
+```
+pytest /path/to/TEMPO/tempo/tests.py
 
-2. Run tests::
+```
 
-    pytest /path/to/TEMPO/tempo/tests.py
-
+    
 
