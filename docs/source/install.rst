@@ -26,10 +26,12 @@ Tests
 
 After installation, unit tests can be performed using the `pytest <https://docs.pytest.org/en/stable/>`_ package.
 
-1. Install pytest::
+1. Install pytest.::
+
     pip install pytest
 
 3. Run the following::
+    
     pytest /path/to/TEMPO/tempo/tests.py
 
 
