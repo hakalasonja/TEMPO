@@ -74,9 +74,8 @@ Your python version should be version 3, python2 is not supported.
 
 
 ## Tests
-============
 
-After installation, unit tests can be performed using the [pytest](<https://docs.pytest.org/en/stable/) package.
+After installation, unit tests can be performed using the [pytest](https://docs.pytest.org/en/stable/) package.
 
 1. Install pytest::
 
