@@ -8,11 +8,9 @@ The Pulse_recipe class to create time-dependent pulse models.
 """
  
 from qutip import qobj
-import os
 from tempo.hamiltonian import Hamiltonian
 from tempo.exceptions import *
-import types
-import numpy as np
+from types import FunctionType
 
 from collections.abc import Iterable
 
@@ -50,7 +48,7 @@ class Pulse_recipe():
         Callback function that calculates the time-dependent coefficient using a time `t` and a dictionary of `args`.
     """
     
-    def __init__(self, ham: Hamiltonian = None, param_keys: Iterable[str] = None, coeff_func: types.FunctionType = None):
+    def __init__(self, ham: Hamiltonian = None, param_keys: Iterable[str] = None, coeff_func: FunctionType = None):
         """
         Pulse_recipe constructor.
         

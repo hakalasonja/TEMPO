@@ -8,7 +8,6 @@ Sequence (list) of pulses.
 """
 
 from qutip import qobj
-import os
 from tempo.hamiltonian import Hamiltonian
 from tempo.pulse import Pulse
 import numpy as np
