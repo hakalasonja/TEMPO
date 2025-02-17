@@ -22,6 +22,7 @@ For time evolution, TEMPO organizes each pulse sequence as a series of time segm
 This avoids overheads incurred by repeated inspections of inactive pulse(s), significantly speeding up evaluation of system evolution.
 
 
+**Documentation** for the package can be found at [https://tempo-docs.readthedocs.io](https://tempo-docs.readthedocs.io/en/latest/).
 
 ## Installation
 
