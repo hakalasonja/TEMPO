@@ -1,22 +1,3 @@
-<!-- PROJECT LOGO -->
-<p align="center">
-  <pre>
-______________________   _____ __________________   
-\__    ___/\_   _____/  /     \\______   \_____  \  
-  |    |    |    __)_  /  \ /  \|     ___//   |   \ 
-  |    |    |        \/    Y    \    |   /    |    \
-  |____|   /_______  /\____|__  /____|   \_______  /
-                   \/         \/                 \/                                   
-  </pre>
-
-
-<!-- Badges -->
-<p align="center">
-  <a href="https://github.com/hakalasonja/tempo/actions/workflows/test.yml">
-    <img src="https://github.com/hakalasonja/tempo/actions/workflows/test.yml/badge.svg" alt="Build Status">
-  </a>
-</p>
-
 
 # Summary
 
