@@ -1,3 +1,5 @@
+# TEMPO
+
 <!-- Badges -->
 <p align="center">
   <a href="https://github.com/hakalasonja/tempo/actions/workflows/test.yml">
