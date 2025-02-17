@@ -1,6 +1,5 @@
-# TEMPO
+# TEMPO: TEMPO: A Python Package for Time Evolution of Pulse Sequences in QuTiP
 
-<!-- Badges -->
 <p align="center">
   <a href="https://github.com/hakalasonja/tempo/actions/workflows/test.yml">
     <img src="https://github.com/hakalasonja/tempo/actions/workflows/test.yml/badge.svg" alt="Build Status">
