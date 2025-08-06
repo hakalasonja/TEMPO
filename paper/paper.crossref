@@ -6,8 +6,8 @@
            version="5.3.1"
            xsi:schemaLocation="http://www.crossref.org/schema/5.3.1 http://www.crossref.org/schemas/crossref5.3.1.xsd">
   <head>
-    <doi_batch_id>20250806192328-a80a2b7d723e464491fedc004bbff09356288226</doi_batch_id>
-    <timestamp>20250806192328</timestamp>
+    <doi_batch_id>20250806195213-a80a2b7d723e464491fedc004bbff09356288226</doi_batch_id>
+    <timestamp>20250806195213</timestamp>
     <depositor>
       <depositor_name>JOSS Admin</depositor_name>
       <email_address>admin@theoj.org</email_address>
@@ -199,6 +199,16 @@
             <doi>10.5281/ZENODO.4515634</doi>
             <cYear>2022</cYear>
             <unstructured_citation>Horn, L. B.-V. (2022). Sequencing-dev/sequencing: v1.2.0. Zenodo. https://doi.org/10.5281/ZENODO.4515634</unstructured_citation>
+          </citation>
+          <citation key="Candoli2023">
+            <article_title>PULSEE: A software for the quantum simulation of an extensive set of magnetic resonance observables</article_title>
+            <author>Candoli</author>
+            <journal_title>Computer Physics Communications</journal_title>
+            <volume>284</volume>
+            <doi>10.1016/j.cpc.2022.108598</doi>
+            <issn>0010-4655</issn>
+            <cYear>2023</cYear>
+            <unstructured_citation>Candoli, D., Nikolov, I. K., Brito, L. Z., Carr, S., Sanna, S., &amp; Mitrović, V. F. (2023). PULSEE: A software for the quantum simulation of an extensive set of magnetic resonance observables. Computer Physics Communications, 284, 108598. https://doi.org/10.1016/j.cpc.2022.108598</unstructured_citation>
           </citation>
           <citation key="Kramer2018">
             <article_title>QuantumOptics. Jl: A julia framework for simulating open quantum systems</article_title>

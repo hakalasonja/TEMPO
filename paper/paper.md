@@ -122,10 +122,8 @@ This advantage can be understood by considering how the solvers are constructed 
 Instead, TEMPO first divides the pulse sequence into consecutive time segments for efficient time evolution, illustrated by an example in \autoref{fig:2}(c). By creating segment breaks at the start and end of each pulse, TEMPO preserves only the active pulses in each of the $2n-1$ segments. The solver is then executed consecutively across each segment, without any redundant checks of inactive pulses. As a result, simulation times are largely independent of $n$, besides minor overheads from repeated use of the solver.
 
 # Related Pulse Sequence Simulation Software
-Existing open-source software that offer compatibility with pulse sequence simulations include QuTiP-based packages such as SeQuencing [@Sequencing] and PULSEE [Candoli2023]. Other software suitable for open quantum simulations of pulse sequence dynamics include Qiskit Dynamics in Python [@Alexander2020; @Puzzuoli2023], QuantumOptics.jl in Julia for speed and scalability to large system sizes [@Kramer2018], and Spinach in MATLAB for nuclear magnetic resonance systems [@Hogben2011].
+Existing open-source software that offer compatibility with pulse sequence simulations include QuTiP-based packages such as SeQuencing [@Sequencing] and PULSEE [@Candoli2023]. Other software suitable for open quantum simulations of pulse sequence dynamics include Qiskit Dynamics in Python [@Alexander2020; @Puzzuoli2023], QuantumOptics.jl in Julia for speed and scalability to large system sizes [@Kramer2018], and Spinach in MATLAB for nuclear magnetic resonance systems [@Hogben2011].
 
 
 # Acknowledgements
 We thank Saipriya Satyajit, Katrijn Everaert, Declan Daly, Kevin Olsson and John Blanchard for testing the package and providing feedback during development. This work is supported by, or in part by, the DEVCOM Army Research Laboratory under Contract Numbers W911NF1920181 and  W911NF2420143; the DEVCOM ARL Army Research Office under Grant Number W911NF2120110; the U.S. Air Force Office of Scientific Research under Grant Number FA95502210312; and the University of Maryland Quantum Technology Center.
-
-# References
