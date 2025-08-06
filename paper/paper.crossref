@@ -6,8 +6,8 @@
            version="5.3.1"
            xsi:schemaLocation="http://www.crossref.org/schema/5.3.1 http://www.crossref.org/schemas/crossref5.3.1.xsd">
   <head>
-    <doi_batch_id>20250113135532-a80a2b7d723e464491fedc004bbff09356288226</doi_batch_id>
-    <timestamp>20250113135532</timestamp>
+    <doi_batch_id>20250806192328-a80a2b7d723e464491fedc004bbff09356288226</doi_batch_id>
+    <timestamp>20250806192328</timestamp>
     <depositor>
       <depositor_name>JOSS Admin</depositor_name>
       <email_address>admin@theoj.org</email_address>
@@ -170,6 +170,54 @@
             <issn>1539-0756</issn>
             <cYear>2020</cYear>
             <unstructured_citation>Barry, J. F., Schloss, J. M., Bauch, E., Turner, M. J., Hart, C. A., Pham, L. M., &amp; Walsworth, R. L. (2020). Sensitivity optimization for NV-diamond magnetometry. Reviews of Modern Physics, 92(1). https://doi.org/10.1103/revmodphys.92.015004</unstructured_citation>
+          </citation>
+          <citation key="Alexander2020">
+            <article_title>Qiskit pulse: Programming quantum computers through the cloud with pulses</article_title>
+            <author>Alexander</author>
+            <journal_title>Quantum Science and Technology</journal_title>
+            <issue>4</issue>
+            <volume>5</volume>
+            <doi>10.1088/2058-9565/aba404</doi>
+            <issn>2058-9565</issn>
+            <cYear>2020</cYear>
+            <unstructured_citation>Alexander, T., Kanazawa, N., Egger, D. J., Capelluto, L., Wood, C. J., Javadi-Abhari, A., &amp; C McKay, D. (2020). Qiskit pulse: Programming quantum computers through the cloud with pulses. Quantum Science and Technology, 5(4), 044006. https://doi.org/10.1088/2058-9565/aba404</unstructured_citation>
+          </citation>
+          <citation key="Puzzuoli2023">
+            <article_title>Qiskit dynamics: A python package for simulating the time dynamics of quantum systems</article_title>
+            <author>Puzzuoli</author>
+            <journal_title>Journal of Open Source Software</journal_title>
+            <issue>90</issue>
+            <volume>8</volume>
+            <doi>10.21105/joss.05853</doi>
+            <issn>2475-9066</issn>
+            <cYear>2023</cYear>
+            <unstructured_citation>Puzzuoli, D., Wood, C. J., Egger, D. J., Rosand, B., &amp; Ueda, K. (2023). Qiskit dynamics: A python package for simulating the time dynamics of quantum systems. Journal of Open Source Software, 8(90), 5853. https://doi.org/10.21105/joss.05853</unstructured_citation>
+          </citation>
+          <citation key="Sequencing">
+            <article_title>Sequencing-dev/sequencing: v1.2.0</article_title>
+            <author>Horn</author>
+            <doi>10.5281/ZENODO.4515634</doi>
+            <cYear>2022</cYear>
+            <unstructured_citation>Horn, L. B.-V. (2022). Sequencing-dev/sequencing: v1.2.0. Zenodo. https://doi.org/10.5281/ZENODO.4515634</unstructured_citation>
+          </citation>
+          <citation key="Kramer2018">
+            <article_title>QuantumOptics. Jl: A julia framework for simulating open quantum systems</article_title>
+            <author>Krämer</author>
+            <journal_title>Computer Physics Communications</journal_title>
+            <volume>227</volume>
+            <cYear>2018</cYear>
+            <unstructured_citation>Krämer, S., Plankensteiner, D., Ostermann, L., &amp; Ritsch, H. (2018). QuantumOptics. Jl: A julia framework for simulating open quantum systems. Computer Physics Communications, 227, 109–116.</unstructured_citation>
+          </citation>
+          <citation key="Hogben2011">
+            <article_title>Spinach – a software library for simulation of spin dynamics in large spin systems</article_title>
+            <author>Hogben</author>
+            <journal_title>Journal of Magnetic Resonance</journal_title>
+            <issue>2</issue>
+            <volume>208</volume>
+            <doi>10.1016/j.jmr.2010.11.008</doi>
+            <issn>1090-7807</issn>
+            <cYear>2011</cYear>
+            <unstructured_citation>Hogben, H. J., Krzystyniak, M., Charnock, G. T. P., Hore, P. J., &amp; Kuprov, I. (2011). Spinach – a software library for simulation of spin dynamics in large spin systems. Journal of Magnetic Resonance, 208(2), 179–194. https://doi.org/10.1016/j.jmr.2010.11.008</unstructured_citation>
           </citation>
         </citation_list>
       </journal_article>

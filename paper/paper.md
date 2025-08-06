@@ -38,7 +38,7 @@ TEMPO (Time-dependent Evolution of Multiple Pulse Operations) offers accessible 
 It enables straightforward definition of pulse sequence structures, including any underlying time-dependent Hamiltonians and pulse timing information, and faster simulations of pulse sequence dynamics (compared to naive implementations using QuTiP) while remaining compatible with the existing collection of QuTiP subpackages. Given the ubiquitous use of pulse sequences throughout quantum information/computing sciences, magnetic resonance studies, and quantum metrology, this work has immediate relevance to a wide array of research applications.
 
 # Statement of Need
-Pulse sequences typically contain a series of discrete operations (pulses) using radio frequency, microwave, or optical fields. Their application for quantum control has an extensive history across atomic physics [@Vitanov2001]; nuclear magnetic resonance [@Levitt2013]; and solid-state spin systems used in quantum technologies [@Barry2020]; and a broad range of other platforms.
+Pulse sequences typically contain a series of discrete operations (pulses) using radio frequency, microwave, or optical fields. Their application for quantum control has an extensive history across atomic physics [@Vitanov2001]; nuclear magnetic resonance [@Levitt2013]; solid-state spin systems for quantum sensing [@Barry2020]; and a broad range of other platforms.
 In recent years, research into quantum technologies has driven the development of advanced software tools for numerical simulations of quantum systems [@Fingerhuth2018]. 
 In particular, the QuTiP (Quantum Toolbox in Python) framework provides open-source tools for simulations of open quantum systems, and has received prolific use across numerous quantum applications [@Johansson2012; @Johansson2013]. Utilizing the master equation solvers that are native to QuTiP, TEMPO provides two key advantages for numerical simulations of pulse sequence dynamics.
 
@@ -121,7 +121,8 @@ This advantage can be understood by considering how the solvers are constructed 
 
 Instead, TEMPO first divides the pulse sequence into consecutive time segments for efficient time evolution, illustrated by an example in \autoref{fig:2}(c). By creating segment breaks at the start and end of each pulse, TEMPO preserves only the active pulses in each of the $2n-1$ segments. The solver is then executed consecutively across each segment, without any redundant checks of inactive pulses. As a result, simulation times are largely independent of $n$, besides minor overheads from repeated use of the solver.
 
-
+# Related Pulse Sequence Simulation Software
+Existing open-source software that offer compatibility with pulse sequence simulations include QuTiP-based packages such as SeQuencing [@Sequencing] and PULSEE [Candoli2023]. Other software suitable for open quantum simulations of pulse sequence dynamics include Qiskit Dynamics in Python [@Alexander2020; @Puzzuoli2023], QuantumOptics.jl in Julia for speed and scalability to large system sizes [@Kramer2018], and Spinach in MATLAB for nuclear magnetic resonance systems [@Hogben2011].
 
 
 # Acknowledgements
