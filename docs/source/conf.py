@@ -37,7 +37,9 @@ html_static_path = ['_static']
 
 # Set the theme to Read the Docs theme (installed via pip)
 html_theme = 'sphinx_rtd_theme'
-#html_style = 'css/custom.css'
+
+# allow syntax highlighting in code blocks
+pygments_style = 'sphinx'
 
 import os
 import sys

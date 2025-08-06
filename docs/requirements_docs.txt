@@ -49,3 +49,5 @@ wheel==0.37.1
 sphinx
 sphinx_rtd_theme
 myst-parser
+nbsphinx
+ipykernel

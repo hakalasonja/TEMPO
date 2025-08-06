@@ -8,13 +8,12 @@ Class to implement time-evolution of a state under applied pulses.
 """
 
 from qutip import mesolve, solver, qobj, expect
-import os
 from tempo.hamiltonian import Hamiltonian
 from tempo.pulse_sequence import Pulse_sequence
 from tempo.pulse import Pulse
 from tempo.exceptions import *
 import numpy as np
-import types
+from types import FunctionType
 import qutip
 from math import isclose
 
@@ -61,7 +60,7 @@ class Evolver():
         Options for `mesolve`.
     """
     
-    def __init__(self, state_init: qobj.Qobj = None, tlist: Iterable[float] = None, pulse_seq: Pulse_sequence = None, c_ops: Iterable[qobj.Qobj] = None, e_ops: Union[Iterable[qobj.Qobj], Iterable[types.FunctionType]] = None, opts: qutip.Options = None):
+    def __init__(self, state_init: qobj.Qobj = None, tlist: Iterable[float] = None, pulse_seq: Pulse_sequence = None, c_ops: Iterable[qobj.Qobj] = None, e_ops: Union[Iterable[qobj.Qobj], Iterable[FunctionType]] = None, opts: qutip.Options = None):
         """
         Evolver constructor.
         
@@ -475,7 +474,7 @@ class Evolver():
         
         return to_user
 
-    def serial_safe_evolve(self, pulse_seq: Pulse_sequence, state_init: qobj.Qobj, tlist: Iterable[float], c_ops: Iterable[qobj.Qobj] = None, e_ops: Iterable[qobj.Qobj] = None, opts: Union[Iterable[qobj.Qobj], Iterable[types.FunctionType]] = None, t_rtol: float = 1e-8):
+    def serial_safe_evolve(self, pulse_seq: Pulse_sequence, state_init: qobj.Qobj, tlist: Iterable[float], c_ops: Iterable[qobj.Qobj] = None, e_ops: Iterable[qobj.Qobj] = None, opts: Union[Iterable[qobj.Qobj], Iterable[FunctionType]] = None, t_rtol: float = 1e-8):
         if state_init is not None and not isinstance(state_init, qobj.Qobj):
             raise TEMPO_ImproperInputException("Initial state is not a Qobj")
         if tlist is not None and not isinstance(tlist, Iterable):

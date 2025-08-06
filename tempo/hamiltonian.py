@@ -8,21 +8,8 @@ The Hamiltonian class for representing Hamiltonian operators.
 """
 
 from qutip import qobj
-import os
-import types
-import numpy as np
-
+from types import FunctionType
 from tempo.exceptions import *
-
-from collections.abc import Iterable
-
-# quality of life: if someone wants just a single matrix, should they still define a function like lambda x: x????
-# if user doesn't input any function, just do lambda x: x by default
-# can pass Hmats as qobj if only one matrix
-
-# do we want wrapper functions for diagonalizing & eigenvalues?
-
-# consider "add" method for adding together two Hamiltonians 
 
 class Hamiltonian():
     """
@@ -58,7 +45,7 @@ class Hamiltonian():
         Callback function that takes the operators and scalars to combine.  
     """
     
-    def __init__(self, ops: dict = {}, op_params: dict = {}, func: types.FunctionType = None):
+    def __init__(self, ops: dict = {}, op_params: dict = {}, func: FunctionType = None):
         """
         Hamiltonian constructor.
 

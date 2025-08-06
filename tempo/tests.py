@@ -5,7 +5,7 @@ This file includes all test cases for the TEMPO library to be run with pytest.
 """
 import numpy as np
 import pytest
-from qutip import Qobj, sigmax, sigmay, sigmaz, basis, Options, expect
+from qutip import sigmax, sigmay, sigmaz, basis, Options, expect
 import math
 
 from tempo.hamiltonian import Hamiltonian

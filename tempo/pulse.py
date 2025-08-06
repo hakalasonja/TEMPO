@@ -7,9 +7,6 @@ Create time-dependent pulses.
 
 """
 
-import os
-import numpy as np
-import qutip
 from tempo.pulse_recipe import Pulse_recipe
 from tempo.hamiltonian import Hamiltonian
 from tempo.exceptions import *
