@@ -6,3 +6,13 @@ build-backend = "flit_core.buildapi"
 name = "TEMPO"
 authors = [{name = "Sonja Hakala", email = "hakalas@terpmail.umd.edu"}]
 dynamic = ["version", "description"]
+
+# Optional
+readme = "README.md"
+license = {file = "COPYING.txt"}
+
+[project.urls]
+Homepage = "https://github.com/hakalasonja/TEMPO"
+
+[tool.flit.module]
+name = "tempo"
