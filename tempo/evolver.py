@@ -343,7 +343,26 @@ class Evolver():
                 
         if method == 'regular':
             H = self.generate_H(pulse_seq)
-            result = mesolve(H, state_init, tlist, c_ops, e_ops, args = None, options = opts)
+            # result = mesolve(H, state_init, tlist, c_ops, e_ops, args = None, options = opts)
+            
+            if opts is not None and hasattr(opts, '__dict__'):
+                # Convert Options object to compatible dict
+                compatible_opts = {
+                    'max_step': getattr(opts, 'nsteps', 10000),
+                    'atol': getattr(opts, 'atol', 1e-8),
+                    'rtol': getattr(opts, 'rtol', 1e-6)
+                }
+                result = mesolve(H, state_init, tlist, c_ops, e_ops, args=None, options=compatible_opts)
+            elif opts is not None and isinstance(opts, dict):
+                # Filter out unsupported options
+                compatible_opts = {k: v for k, v in opts.items() if k in ['max_step', 'atol', 'rtol']}
+                if 'nsteps' in opts and 'max_step' not in compatible_opts:
+                    compatible_opts['max_step'] = opts['nsteps']
+                result = mesolve(H, state_init, tlist, c_ops, e_ops, args=None, options=compatible_opts)
+            else:
+                result = mesolve(H, state_init, tlist, c_ops, e_ops, args=None, options={})            
+            
+            
         elif method == 'serial':
             result = self.serial_evolve(pulse_seq, state_init, tlist, c_ops, e_ops, opts, t_rtol)
         elif method == 'serial_safe':

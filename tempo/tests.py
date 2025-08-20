@@ -705,7 +705,7 @@ class TestFullSystem:
         ev = Evolver(state_init, times_eval, pseq, opts = opts)
 
         # Run evaluation
-        result = ev.evolve(method = 'regular')
+        result = ev.evolve(method = 'serial')
         
         expectations_Z = expect(sigmaz(), result.states)
         
