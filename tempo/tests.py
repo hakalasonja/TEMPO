@@ -699,8 +699,8 @@ class TestFullSystem:
         pseq.add_pulse(pulseX)
 
         # define solver options
-        opts = Options(rhs_reuse = False, nsteps = 1000000, atol=1e-9, rtol=1e-9, tidy=False)
-
+        opts = {'max_step': 1000000, 'atol': 1e-9, 'rtol': 1e-9}
+        
         # initialize evolver objects (no difference at this point)
         ev = Evolver(state_init, times_eval, pseq, opts = opts)
 
