@@ -10,9 +10,38 @@ dynamic = ["version", "description"]
 # Optional
 readme = "README.md"
 license = {file = "COPYING.txt"}
+requires-python = ">=3.8"
+keywords = ["quantum", "physics", "pulse sequence", "simulation", "qutip"]
+
+
+# Dependencies from your requirements.txt
+dependencies = [
+    "numpy",
+    "qutip>=4.7.0",
+    "multiprocess"
+]
+
+# Optional dependencies for development and docs
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "black",
+    "flake8"
+]
+docs = [
+    "sphinx",
+    "sphinx-rtd-theme",
+    "nbsphinx",
+    "jupyter"
+]
 
 [project.urls]
 Homepage = "https://github.com/hakalasonja/TEMPO"
+Documentation = "https://tempo-docs.readthedocs.io"
+Repository = "https://github.com/hakalasonja/TEMPO"
+"Bug Tracker" = "https://github.com/hakalasonja/TEMPO/issues"
 
 [tool.flit.module]
 name = "tempo"
+

@@ -21,6 +21,74 @@ from collections.abc import Iterable
 from typing import Union
 
 
+# QuTiP 5.x Compatibility Fix for evolver.py
+
+def create_result_object(e_ops=None, opts=None, times=None, states=None, expect_values=None):
+    """Create a QuTiP Result object compatible with QuTiP 5.x."""
+    # Default options dict for QuTiP 5.x
+    default_options = {
+        'store_states': True,
+        'store_final_state': True,
+        'normalize_output': True,
+        'progress_bar': None,
+        'progress_kwargs': {}
+    }
+    
+    # Convert opts to dict if it's a qutip.Options object
+    if opts is not None:
+        if hasattr(opts, '__dict__'):
+            # Convert Options object to dict
+            opts_dict = {k: v for k, v in opts.__dict__.items() if not k.startswith('_')}
+        elif isinstance(opts, dict):
+            opts_dict = opts
+        else:
+            opts_dict = default_options
+    else:
+        opts_dict = default_options
+    
+    # Merge with defaults
+    final_options = {**default_options, **opts_dict}
+    
+    # Create Result object
+    result = solver.Result(e_ops or [], final_options)
+    
+    # Set the data using the internal methods if available
+    if times is not None:
+        result.times = times
+    if states is not None and hasattr(result, '_Result__states'):
+        result._Result__states = states
+    elif states is not None:
+        # Try direct assignment for older versions
+        try:
+            result.states = states
+        except AttributeError:
+            pass
+    
+    if expect_values is not None and hasattr(result, '_Result__expect'):
+        result._Result__expect = expect_values
+    elif expect_values is not None:
+        # Try direct assignment for older versions
+        try:
+            result.expect = expect_values
+        except AttributeError:
+            pass
+    
+    return result
+
+def safe_copy_result_attributes(to_result, from_result):
+    """Safely copy attributes from one Result object to another, handling missing attributes."""
+    # List of attributes that might exist in QuTiP 4.x but not 5.x
+    optional_attrs = ['solver', 'num_expect', 'num_collapse', 'ntraj', 'col_times', 'col_which']
+    
+    for attr in optional_attrs:
+        if hasattr(from_result, attr):
+            try:
+                setattr(to_result, attr, getattr(from_result, attr))
+            except (AttributeError, TypeError):
+                # If we can't set it, just skip it
+                pass
+            
+            
 class Evolver():
     """
     Time-evolution of a state under a pulse sequence.
@@ -445,31 +513,44 @@ class Evolver():
             to_user_states = []
     
             
-        to_user = solver.Result()
-        to_user.times = tlist
-        to_user.states = to_user_states
-        to_user.expect = to_user_expect
+
+        to_user = create_result_object(e_ops, 
+                                       opts, 
+                                       times=tlist, 
+                                       states=to_user_states, 
+                                       expect_values=to_user_expect)    
+        
+
         
         if solver_used:
-            to_user.solver = res.solver
-            to_user.num_expect = res.num_expect
-            to_user.num_collapse = res.num_collapse
-            to_user.ntraj = res.ntraj
-            to_user.col_times = res.col_times
-            to_user.col_which = res.col_which
+            safe_copy_result_attributes(to_user, res)
         else:
-            to_user.solver = None
+            # Set default values for attributes that might be expected
+            try:
+                to_user.solver = None
+            except AttributeError:
+                pass
             
-            if is_e_ops:
-                to_user.num_expect = len(e_ops)
-                
-            if c_ops == None or len(c_ops) == 0:
-                to_user.num_collapse = 0
-            else:
-                to_user.num_collapse = len(c_ops)
-            to_user.ntraj = 0
-            to_user.col_times = []
-            to_user.col_which = []
+            try:
+                if is_e_ops:
+                    to_user.num_expect = len(e_ops)
+            except AttributeError:
+                pass
+            
+            try:
+                if c_ops == None or len(c_ops) == 0:
+                    to_user.num_collapse = 0
+                else:
+                    to_user.num_collapse = len(c_ops)
+            except AttributeError:
+                pass
+            
+            try:
+                to_user.ntraj = 0
+                to_user.col_times = []
+                to_user.col_which = []
+            except AttributeError:
+                pass
         
         
         return to_user
@@ -649,31 +730,49 @@ class Evolver():
         if is_e_ops:
             to_user_states = []
             
-        to_user = solver.Result()
-        to_user.times = tlist
-        to_user.states = to_user_states
-        to_user.expect = to_user_expect
+
+        # to_user = create_result_object(e_ops, opts)   
+        # to_user.times = tlist
+        # to_user.states = to_user_states
+        # to_user.expect = to_user_expect
+        
+        to_user = create_result_object(e_ops, 
+                                       opts, 
+                                       times=tlist, 
+                                       states=to_user_states, 
+                                       expect_values=to_user_expect)
+        
+
         
         if solver_used:
-            to_user.solver = res.solver
-            to_user.num_expect = res.num_expect
-            to_user.num_collapse = res.num_collapse
-            to_user.ntraj = res.ntraj
-            to_user.col_times = res.col_times
-            to_user.col_which = res.col_which
+            safe_copy_result_attributes(to_user, res)
         else:
-            to_user.solver = None
+            # Set default values for attributes that might be expected
+            try:
+                to_user.solver = None
+            except AttributeError:
+                pass
             
-            if is_e_ops:
-                to_user.num_expect = len(e_ops)
-                
-            if c_ops == None or len(c_ops) == 0:
-                to_user.num_collapse = 0
-            else:
-                to_user.num_collapse = len(c_ops)
-            to_user.ntraj = 0
-            to_user.col_times = []
-            to_user.col_which = []
+            try:
+                if is_e_ops:
+                    to_user.num_expect = len(e_ops)
+            except AttributeError:
+                pass
+            
+            try:
+                if c_ops == None or len(c_ops) == 0:
+                    to_user.num_collapse = 0
+                else:
+                    to_user.num_collapse = len(c_ops)
+            except AttributeError:
+                pass
+            
+            try:
+                to_user.ntraj = 0
+                to_user.col_times = []
+                to_user.col_which = []
+            except AttributeError:
+                pass
         
         return to_user
     
