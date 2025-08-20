@@ -12,7 +12,7 @@ from types import FunctionType
 from tempo.exceptions import *
 
 class Hamiltonian():
-    """
+    r"""
     A class for representing time-independent Hamiltonian operators.
     
     The Hamiltonian object is composed of a numerical coefficient and an operator. The constructor takes a dictionary of parameters and a dictionary of operators, along with a callback function. The Python function tells the Hamiltonian how to combine the parameters and operators into a single term. For example, if the Hamiltonian term is :math:`a/bC\cdot D`, then 

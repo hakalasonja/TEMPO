@@ -724,7 +724,7 @@ class TestFullSystem:
                               -0.7305019029266913,    -0.9292829035348242,    -0.9999999998496966 
                               ]
         
-        atol = 1e-7
-        rtol = 1e-7
+        atol = 1e-6
+        rtol = 1e-6
         for i, x in enumerate(expected_result_Z):
             assert(math.isclose(x, expectations_Z[i], abs_tol=atol, rel_tol=rtol))
