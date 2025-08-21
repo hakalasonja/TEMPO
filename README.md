@@ -30,7 +30,7 @@ This avoids overheads incurred by repeated inspections of inactive pulse(s), sig
 Installation can be done using package manager [pip](https://pip.pypa.io/en/stable/) and python's virtual environment module [venv](https://docs.python.org/3/library/venv.html).
 
 
-1. Note the directory where **TEMPO** can be found. For this guide, it is located in ``/path/to/TEMPO``.
+1. Note the directory where **TEMPO** is located. For this guide, it is located in ``/path/to/TEMPO``.
 
 2. Create a virtual environment (named venv1 here), then activate the environment:
 ```
