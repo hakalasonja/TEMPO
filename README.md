@@ -37,9 +37,9 @@ Installation can be done using package manager [pip](https://pip.pypa.io/en/stab
 python -m venv venv1
 source venv1/bin/activate
 ```
-3. Install dependencies:
+3. Install package (pip is used here):
 ```
-pip install -r TEMPO/requirements.txt
+pip install /path/to/TEMPO
 ```
 4. (Optional) If using Jupyter notebook examples found in `/path/to/TEMPO/examples`, create kernel for notebook use:
 ```
