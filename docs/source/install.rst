@@ -6,14 +6,14 @@ Installation can be done using package manager `pip <https://pip.pypa.io/en/stab
 
 1. Note the directory where **TEMPO** can be found. For this guide, it is located in ``/path/to/TEMPO``.
 
-2. Create a virtual environment (named venv1 here), then activate the environment::
+2. Create a virtual environment (named ``venv1`` here), then activate the environment::
 
     python -m venv venv1
     source venv1/bin/activate
 
 3. Install dependencies::
     
-    pip install -r /path/to/TEMPO/requirements.txt
+    pip install /path/to/TEMPO
     
 4. (Optional) If using Jupyter notebook examples found in ``/path/to/TEMPO/examples``, create kernel for notebook use::
 
