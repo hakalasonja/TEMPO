@@ -10,15 +10,15 @@ dynamic = ["version", "description"]
 # Optional
 readme = "README.md"
 license = {file = "COPYING.txt"}
-requires-python = ">=3.8"
+requires-python = ">=3.8,<3.13"
 keywords = ["quantum", "physics", "pulse sequence", "simulation", "qutip"]
 
 
 # Dependencies from your requirements.txt
 dependencies = [
     "numpy",
-    "qutip>=4.7.0",
-    "multiprocess"
+    "qutip>=5.0.0",
+    "multiprocess",
 ]
 
 # Optional dependencies for development and docs
