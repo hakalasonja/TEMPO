@@ -5,7 +5,7 @@ This file includes all test cases for the TEMPO library to be run with pytest.
 """
 import numpy as np
 import pytest
-from qutip import sigmax, sigmay, sigmaz, basis, Options, expect
+from qutip import sigmax, sigmay, sigmaz, basis, expect
 import math
 
 from tempo.hamiltonian import Hamiltonian
@@ -728,3 +728,34 @@ class TestFullSystem:
         rtol = 1e-6
         for i, x in enumerate(expected_result_Z):
             assert(math.isclose(x, expectations_Z[i], abs_tol=atol, rel_tol=rtol))
+
+
+class TestSolverOptions:
+    """Solver options (`opts`) are passed to QuTiP 5's `mesolve` as a dict."""
+
+    @staticmethod
+    def make_pulse_seq():
+        # single qubit driven resonantly about x for one full Rabi period
+        recipe = Pulse_recipe(Hamiltonian(sigmax()), ['amp'], lambda t, args: args['amp'])
+        pseq = Pulse_sequence(Hstat = 0 * sigmaz())
+        pseq.add_pulse(Pulse(recipe, start_time = 0, duration = 1, coeff_params = {'amp': np.pi}))
+        return pseq
+
+    @pytest.mark.parametrize("method", ['regular', 'serial', 'serial_safe'])
+    def test_legacy_options_dropped_with_warning(self, method):
+        legacy_opts = {'rhs_reuse': False, 'tidy': False, 'nsteps': 100000, 'atol': 1e-9, 'rtol': 1e-9}
+        ev = Evolver(basis(2, 0), np.linspace(0, 1, 11), self.make_pulse_seq(), opts = legacy_opts)
+        with pytest.warns(UserWarning, match = "rhs_reuse"):
+            result = ev.evolve(method = method)
+        # after one full Rabi period the qubit is back in its initial state
+        assert math.isclose(expect(sigmaz(), result.states[-1]), 1.0, abs_tol = 1e-6)
+
+    def test_nsteps_is_passed_to_solver(self):
+        # nsteps = 1 is too few integration steps, so QuTiP must raise an error
+        ev = Evolver(basis(2, 0), np.linspace(0, 1, 11), self.make_pulse_seq(), opts = {'nsteps': 1})
+        with pytest.raises(Exception, match = "nsteps"):
+            ev.evolve(method = 'regular')
+
+    def test_non_dict_options_raise(self):
+        with pytest.raises(TEMPO_ImproperInputException):
+            Evolver(basis(2, 0), np.linspace(0, 1, 11), self.make_pulse_seq(), opts = ['nsteps', 100])

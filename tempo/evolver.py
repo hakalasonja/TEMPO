@@ -19,9 +19,45 @@ from math import isclose
 
 from collections.abc import Iterable
 from typing import Union
+import warnings
 
 
 # QuTiP 5.x Compatibility Fix for evolver.py
+
+# Options from QuTiP 4's `qutip.Options` class that QuTiP 5 solvers no longer accept.
+# QuTiP 5.0-5.2 still provide `qutip.Options` as a deprecated alias that returns a plain
+# dict, so these keys can reach TEMPO from older user code; QuTiP 5.3 removed the alias.
+_QUTIP4_ONLY_OPTIONS = {
+    'rhs_reuse', 'rhs_filename', 'rhs_with_state', 'tidy',
+    'average_states', 'average_expect', 'use_openmp', 'openmp_threads',
+    'num_cpus', 'steady_state_average', 'ntraj', 'norm_tol', 'norm_steps',
+    'norm_t_tol', 'mc_corr_eps', 'seeds',
+}
+
+
+def _prepare_options(opts):
+    """
+    Return a copy of `opts` that can be passed to QuTiP 5's `mesolve` as `options`.
+
+    `opts` must be None or a dict of QuTiP solver options (for example
+    ``{'nsteps': 100000, 'atol': 1e-9, 'rtol': 1e-9}``). Options that only existed in
+    QuTiP 4 are dropped with a warning; any other unsupported option is left for QuTiP
+    to report.
+    """
+    if opts is None:
+        return {}
+    if not isinstance(opts, dict):
+        raise TEMPO_ImproperInputException("opts must be a dict of QuTiP solver options")
+
+    dropped = sorted(k for k in opts if k in _QUTIP4_ONLY_OPTIONS)
+    if dropped:
+        warnings.warn(
+            f"Ignoring QuTiP 4 solver option(s) not supported by QuTiP 5: {dropped}",
+            UserWarning,
+            stacklevel=3,
+        )
+    return {k: v for k, v in opts.items() if k not in _QUTIP4_ONLY_OPTIONS}
+
 
 def create_result_object(e_ops=None, opts=None, times=None, states=None, expect_values=None):
     """Create a QuTiP Result object compatible with QuTiP 5.x."""
@@ -109,8 +145,8 @@ class Evolver():
         List of collapse operators.
     e_ops : list of :obj:`qutip.Qobj` or callback functions
         List of operators for which to evaluate expectation values.
-    opts : :obj:`qutip.Options`
-        Options for `qutip.mesolve`.
+    opts : dict, optional
+        Solver options for `qutip.mesolve`, e.g. ``{'nsteps': 100000, 'atol': 1e-9, 'rtol': 1e-9}``.
     
     Attributes
     ----------
@@ -124,11 +160,11 @@ class Evolver():
         List of collapse operators.
     e_ops : list of :obj:`qutip.Qobj` or callback functions
         List of operators for which to evaluate expectation values.
-    opts : :obj:`qutip.Options`
-        Options for `mesolve`.
+    opts : dict
+        Solver options for `mesolve`.
     """
     
-    def __init__(self, state_init: qobj.Qobj = None, tlist: Iterable[float] = None, pulse_seq: Pulse_sequence = None, c_ops: Iterable[qobj.Qobj] = None, e_ops: Union[Iterable[qobj.Qobj], Iterable[FunctionType]] = None, opts: qutip.Options = None):
+    def __init__(self, state_init: qobj.Qobj = None, tlist: Iterable[float] = None, pulse_seq: Pulse_sequence = None, c_ops: Iterable[qobj.Qobj] = None, e_ops: Union[Iterable[qobj.Qobj], Iterable[FunctionType]] = None, opts: dict = None):
         """
         Evolver constructor.
         
@@ -146,8 +182,8 @@ class Evolver():
             List of collapse operators.
         e_ops : list of :obj:`qutip.Qobj` or callback functions
             List of operators for which to evaluate expectation values.
-        opts : :obj:`qutip.Options`
-            Options for `qutip.mesolve`.
+        opts : dict, optional
+            Solver options for `qutip.mesolve`, e.g. ``{'nsteps': 100000, 'atol': 1e-9, 'rtol': 1e-9}``.
         """
         
         if state_init is not None and not isinstance(state_init, qobj.Qobj):
@@ -174,8 +210,8 @@ class Evolver():
             raise TEMPO_ImproperInputException("e_ops is not an iterable")
         if e_ops is not None and sum([1 if (not callable(c) or not isinstance(c, qobj.Qobj)) else 0 for c in e_ops]) != 0:
             raise TEMPO_ImproperInputException("e_ops is not None, list of Qobjs, callables, etc.")
-        if opts is not None and type(opts) != type(qutip.Options()):
-            raise TEMPO_ImproperInputException("opts is not an Options object")
+        if opts is not None and not isinstance(opts, dict):
+            raise TEMPO_ImproperInputException("opts must be a dict of QuTiP solver options")
 
         self._state_init = state_init
         self._tlist = tlist
@@ -257,7 +293,7 @@ class Evolver():
 
         return H
     
-    def evolve(self, state_init: qobj.Qobj = None, tlist: Iterable[float] = None, pulse_seq: Pulse_sequence = None, c_ops: Iterable[qobj.Qobj] = None, e_ops: Iterable[qobj.Qobj] = None, opts: qutip.Options = None, method: str = 'serial', t_rtol: float = 1e-8) -> solver.Result:
+    def evolve(self, state_init: qobj.Qobj = None, tlist: Iterable[float] = None, pulse_seq: Pulse_sequence = None, c_ops: Iterable[qobj.Qobj] = None, e_ops: Iterable[qobj.Qobj] = None, opts: dict = None, method: str = 'serial', t_rtol: float = 1e-8) -> solver.Result:
         """
         Evolve `state_init` using given pulse sequence. Collapse operators `c_ops` may be passed. Return a `qutip.Result` object which stores output for each timestamp given in `tlist`. If `e_ops` is left as None, `qutip.Result` contains the state vector of the system at each timestamp in its `states` attribute. Otherwise, the expectation values of the operator(s) listed in `e_ops` are stored in `qutip.Result.expect` in a 2-dimensional list. 
         
@@ -275,8 +311,8 @@ class Evolver():
             List of collapse operators.
         e_ops : list of `qutip.Qobj`
             List of operators for which to evaluate expectation values.
-        opts : `qutip.Options`
-            Options for `mesolve`.
+        opts : dict, optional
+            Solver options for `mesolve`, e.g. ``{'nsteps': 100000, 'atol': 1e-9, 'rtol': 1e-9}``.
         method : str {'regular', 'serial', 'serial_safe'}, default = 'serial'
             Choice of which solving method to use.
         t_rtol : float, default = 1e-8
@@ -311,8 +347,8 @@ class Evolver():
             raise TEMPO_ImproperInputException("e_ops is not an iterable")
         if e_ops is not None and sum([1 if (not callable(c) or not isinstance(c, qobj.Qobj)) else 0 for c in e_ops]) != 0:
             raise TEMPO_ImproperInputException("e_ops is not None, list of Qobjs, callables, etc.")
-        if opts is not None and type(opts) != type(qutip.Options()):
-            raise TEMPO_ImproperInputException("opts is not an Options object")
+        if opts is not None and not isinstance(opts, dict):
+            raise TEMPO_ImproperInputException("opts must be a dict of QuTiP solver options")
 
         if method != "regular" and method != "serial" and method != "serial_safe":
             raise TEMPO_ImproperInputException("Method not in allowed form")
@@ -343,26 +379,8 @@ class Evolver():
                 
         if method == 'regular':
             H = self.generate_H(pulse_seq)
-            # result = mesolve(H, state_init, tlist, c_ops, e_ops, args = None, options = opts)
-            
-            if opts is not None and hasattr(opts, '__dict__'):
-                # Convert Options object to compatible dict
-                compatible_opts = {
-                    'max_step': getattr(opts, 'nsteps', 10000),
-                    'atol': getattr(opts, 'atol', 1e-8),
-                    'rtol': getattr(opts, 'rtol', 1e-6)
-                }
-                result = mesolve(H, state_init, tlist, c_ops, e_ops, args=None, options=compatible_opts)
-            elif opts is not None and isinstance(opts, dict):
-                # Filter out unsupported options
-                compatible_opts = {k: v for k, v in opts.items() if k in ['max_step', 'atol', 'rtol']}
-                if 'nsteps' in opts and 'max_step' not in compatible_opts:
-                    compatible_opts['max_step'] = opts['nsteps']
-                result = mesolve(H, state_init, tlist, c_ops, e_ops, args=None, options=compatible_opts)
-            else:
-                result = mesolve(H, state_init, tlist, c_ops, e_ops, args=None, options={})            
-            
-            
+            result = mesolve(H, state_init, tlist, c_ops=c_ops, e_ops=e_ops, args=None, options=_prepare_options(opts))
+
         elif method == 'serial':
             result = self.serial_evolve(pulse_seq, state_init, tlist, c_ops, e_ops, opts, t_rtol)
         elif method == 'serial_safe':
@@ -372,7 +390,7 @@ class Evolver():
             
         return result
             
-    def serial_evolve(self, pulse_seq: Pulse_sequence, state_init: qobj.Qobj, tlist: Iterable[float], c_ops: Iterable[qobj.Qobj], e_ops: Iterable[qobj.Qobj], opts: qutip.Options, t_rtol: float): #TODO: Type hint        
+    def serial_evolve(self, pulse_seq: Pulse_sequence, state_init: qobj.Qobj, tlist: Iterable[float], c_ops: Iterable[qobj.Qobj], e_ops: Iterable[qobj.Qobj], opts: dict, t_rtol: float): #TODO: Type hint        
         if state_init is not None and not isinstance(state_init, qobj.Qobj):
             raise TEMPO_ImproperInputException("Initial state is not a Qobj")
         if tlist is not None and not isinstance(tlist, Iterable):
@@ -397,8 +415,10 @@ class Evolver():
             raise TEMPO_ImproperInputException("e_ops is not an iterable")
         if e_ops is not None and sum([1 if (not callable(c) or not isinstance(c, qobj.Qobj)) else 0 for c in e_ops]) != 0:
             raise TEMPO_ImproperInputException("e_ops is not None, list of Qobjs, callables, etc.")
-        if opts is not None and type(opts) != type(qutip.Options()):
-            raise TEMPO_ImproperInputException("opts is not an Options object")
+        if opts is not None and not isinstance(opts, dict):
+            raise TEMPO_ImproperInputException("opts must be a dict of QuTiP solver options")
+
+        solver_opts = _prepare_options(opts)
 
         for i in np.arange(len(tlist)-1):
             if isclose(tlist[i], tlist[i+1], rel_tol=t_rtol):
@@ -481,9 +501,9 @@ class Evolver():
                 solver_used = False
             else:
                 if len(segment_H) == 1 and is_Hstat:
-                    res = mesolve(segment_H[0], state_init, segment_tlist, c_ops = c_ops, options = opts)
+                    res = mesolve(segment_H[0], state_init, segment_tlist, c_ops = c_ops, options = solver_opts)
                 else:
-                    res = mesolve(segment_H, state_init, segment_tlist, c_ops = c_ops, options = opts)
+                    res = mesolve(segment_H, state_init, segment_tlist, c_ops = c_ops, options = solver_opts)
                 states = res.states
                 #exp = expect(e_ops, states)
                 state_init = states[-1] # for the next iteration, this is the initial state
@@ -534,7 +554,7 @@ class Evolver():
             
 
         to_user = create_result_object(e_ops, 
-                                       opts, 
+                                       solver_opts, 
                                        times=tlist, 
                                        states=to_user_states, 
                                        expect_values=to_user_expect)    
@@ -574,7 +594,7 @@ class Evolver():
         
         return to_user
 
-    def serial_safe_evolve(self, pulse_seq: Pulse_sequence, state_init: qobj.Qobj, tlist: Iterable[float], c_ops: Iterable[qobj.Qobj] = None, e_ops: Iterable[qobj.Qobj] = None, opts: Union[Iterable[qobj.Qobj], Iterable[FunctionType]] = None, t_rtol: float = 1e-8):
+    def serial_safe_evolve(self, pulse_seq: Pulse_sequence, state_init: qobj.Qobj, tlist: Iterable[float], c_ops: Iterable[qobj.Qobj] = None, e_ops: Iterable[qobj.Qobj] = None, opts: dict = None, t_rtol: float = 1e-8):
         if state_init is not None and not isinstance(state_init, qobj.Qobj):
             raise TEMPO_ImproperInputException("Initial state is not a Qobj")
         if tlist is not None and not isinstance(tlist, Iterable):
@@ -597,9 +617,11 @@ class Evolver():
                 raise TEMPO_ImproperInputException("c_ops includes a non Qobj")
         if e_ops is not None and not isinstance(e_ops, Iterable): # TODO: 3 options, Qobj, list of Qobjs
             raise TEMPO_ImproperInputException("e_ops is not an iterable")
-        if opts is not None and type(opts) != type(qutip.Options()):
-            raise TEMPO_ImproperInputException("opts is not an Options object")
+        if opts is not None and not isinstance(opts, dict):
+            raise TEMPO_ImproperInputException("opts must be a dict of QuTiP solver options")
         
+        solver_opts = _prepare_options(opts)
+
         ps_init = pulse_seq
     
         ps_starts = sorted(ps_init.pulses, key = lambda p: p.start_time)
@@ -703,10 +725,10 @@ class Evolver():
                 solver_used = False
             else:
                 if len(segment_H) == 1 and is_Hstat:
-                    res = mesolve(segment_H[0], state_init, segment_tlist, c_ops = c_ops, options = opts)
+                    res = mesolve(segment_H[0], state_init, segment_tlist, c_ops = c_ops, options = solver_opts)
                     
                 else:
-                    res = mesolve(segment_H, state_init, segment_tlist, c_ops = c_ops, options = opts)
+                    res = mesolve(segment_H, state_init, segment_tlist, c_ops = c_ops, options = solver_opts)
                 states = res.states
                 #exp = [[expect(op, state) for op in e_ops] for state in states]
                 state_init = states[-1] # for the next iteration, this is the initial state
@@ -756,7 +778,7 @@ class Evolver():
         # to_user.expect = to_user_expect
         
         to_user = create_result_object(e_ops, 
-                                       opts, 
+                                       solver_opts, 
                                        times=tlist, 
                                        states=to_user_states, 
                                        expect_values=to_user_expect)
