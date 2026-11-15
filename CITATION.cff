@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use TEMPO in your research, please cite it using the metadata below."
+title: "TEMPO: A Python Package for Time Evolution of Pulse Sequences in QuTiP"
+type: software
+authors:
+  - given-names: Jner Tzern
+    family-names: Oon
+  - given-names: Sonja A.
+    family-names: Hakala
+  - given-names: George A.
+    family-names: Witt
+  - given-names: Ronald
+    family-names: Walsworth
+version: 1.0.0
+license: GPL-3.0-or-later
+repository-code: "https://github.com/hakalasonja/TEMPO"
+url: "https://tempo-docs.readthedocs.io"
+keywords:
+  - quantum
+  - physics
+  - pulse sequence
+  - simulation
+  - qutip
