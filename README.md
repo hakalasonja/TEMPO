@@ -80,3 +80,28 @@ pytest /path/to/TEMPO/tempo/tests.py
 
     
 
+## Contributing and Support
+
+Bug reports, questions, and feature requests are welcome through [GitHub Issues](https://github.com/hakalasonja/TEMPO/issues). For details on reporting issues, setting up a development environment, and submitting pull requests, see [CONTRIBUTING.md](CONTRIBUTING.md). For private inquiries, contact jjoon@umd.edu.
+
+
+
+## Citing TEMPO
+
+If you use TEMPO in your research, please cite it. Citation metadata is provided in [CITATION.cff](CITATION.cff), and GitHub's "Cite this repository" button (in the repository sidebar) generates APA and BibTeX formats from it. The BibTeX entry is:
+
+```bibtex
+@software{tempo,
+  author  = {Oon, Jner Tzern and Hakala, Sonja A. and Witt, George A. and Walsworth, Ronald},
+  title   = {{TEMPO}: A Python Package for Time Evolution of Pulse Sequences in {QuTiP}},
+  version = {1.0.0},
+  year    = {2025},
+  url     = {https://github.com/hakalasonja/TEMPO}
+}
+```
+
+
+
+## License
+
+TEMPO is free software, released under the [GNU General Public License v3.0 or later](COPYING.txt) (GPL-3.0-or-later). You can redistribute and/or modify it under the terms of version 3 of the License, or (at your option) any later version published by the Free Software Foundation.
