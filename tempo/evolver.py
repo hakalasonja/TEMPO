@@ -59,6 +59,31 @@ def _prepare_options(opts):
     return {k: v for k, v in opts.items() if k not in _QUTIP4_ONLY_OPTIONS}
 
 
+class _PulseCoefficient:
+    """
+    Wrap a pulse's coefficient method so QuTiP calls it as ``f(t)``.
+
+    QuTiP 5.3 deprecates time-dependent coefficient functions with the signature
+    ``f(t, args)`` (to be removed in QuTiP 5.5), which is the signature of
+    `Pulse.eval_coeff` and `Pulse.serial_eval_coeff`. This wrapper presents the
+    supported ``f(t)`` signature to QuTiP while leaving the public `Pulse` methods
+    unchanged. Two wrappers of the same pulse method compare equal, so a pulse's
+    Hamiltonian term can still be found and removed from a list by value.
+    """
+
+    def __init__(self, func):
+        self.func = func
+
+    def __call__(self, t):
+        return self.func(t)
+
+    def __eq__(self, other):
+        return isinstance(other, _PulseCoefficient) and self.func == other.func
+
+    def __hash__(self):
+        return hash(self.func)
+
+
 def create_result_object(e_ops=None, opts=None, times=None, states=None, expect_values=None):
     """Create a QuTiP Result object compatible with QuTiP 5.x."""
     # Default options dict for QuTiP 5.x
@@ -253,7 +278,7 @@ class Evolver():
             H.append(pulse_seq.Hstat)
             is_Hstat = True
         for pulse in pulse_seq.pulses:
-            H.append([pulse.ham.H, pulse.eval_coeff])
+            H.append([pulse.ham.H, _PulseCoefficient(pulse.eval_coeff)])
             
         if len(pulse_seq.pulses) == 0 and is_Hstat:
             H = H[0]
@@ -286,10 +311,10 @@ class Evolver():
 
         if safe:
             for pulse in pulselist:
-                H.append([pulse.ham.H, pulse.eval_coeff])
+                H.append([pulse.ham.H, _PulseCoefficient(pulse.eval_coeff)])
         else:
             for pulse in pulselist:
-                H.append([pulse.ham.H, pulse.serial_eval_coeff])
+                H.append([pulse.ham.H, _PulseCoefficient(pulse.serial_eval_coeff)])
 
         return H
     

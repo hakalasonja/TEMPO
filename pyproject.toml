@@ -17,7 +17,7 @@ keywords = ["quantum", "physics", "pulse sequence", "simulation", "qutip"]
 # Dependencies from your requirements.txt
 dependencies = [
     "numpy",
-    "qutip>=5.0.0",
+    "qutip>=5.1.0",
     "multiprocess",
 ]
 

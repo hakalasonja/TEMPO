@@ -7,6 +7,7 @@ import numpy as np
 import pytest
 from qutip import sigmax, sigmay, sigmaz, basis, expect
 import math
+import warnings
 
 from tempo.hamiltonian import Hamiltonian
 from tempo.pulse_recipe import Pulse_recipe
@@ -759,3 +760,13 @@ class TestSolverOptions:
     def test_non_dict_options_raise(self):
         with pytest.raises(TEMPO_ImproperInputException):
             Evolver(basis(2, 0), np.linspace(0, 1, 11), self.make_pulse_seq(), opts = ['nsteps', 100])
+
+    @pytest.mark.parametrize("method", ['regular', 'serial', 'serial_safe'])
+    def test_no_qutip_coefficient_deprecation_warning(self, method):
+        # QuTiP 5.3 deprecates coefficient functions with the signature f(t, args);
+        # TEMPO must pass pulse coefficients to QuTiP in the supported f(t) style
+        ev = Evolver(basis(2, 0), np.linspace(0, 1, 11), self.make_pulse_seq())
+        with warnings.catch_warnings():
+            warnings.filterwarnings("error", message = ".*signature f\\(t, args\\) is deprecated")
+            result = ev.evolve(method = method)
+        assert math.isclose(expect(sigmaz(), result.states[-1]), 1.0, abs_tol = 1e-6)
