@@ -91,7 +91,7 @@ Bug reports, questions, and feature requests are welcome through [GitHub Issues]
 If you use TEMPO in your research, please cite it. Citation metadata is provided in [CITATION.cff](CITATION.cff), and GitHub's "Cite this repository" button (in the repository sidebar) generates APA and BibTeX formats from it. The BibTeX entry is:
 
 ```bibtex
-@software{tempo,
+@software{tempo2025,
   author  = {Oon, Jner Tzern and Hakala, Sonja A. and Witt, George A. and Walsworth, Ronald},
   title   = {{TEMPO}: A Python Package for Time Evolution of Pulse Sequences in {QuTiP}},
   version = {1.0.0},
